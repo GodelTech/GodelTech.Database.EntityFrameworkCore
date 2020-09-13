@@ -14,7 +14,6 @@ namespace GodelTech.Database.EntityFrameworkCore
     public class DatabaseServiceBase
     {
         private readonly ILogger _logger;
-
         private readonly IList<DbContext> _dbContexts;
 
         /// <summary>
@@ -25,14 +24,13 @@ namespace GodelTech.Database.EntityFrameworkCore
         protected DatabaseServiceBase(ILogger logger, params DbContext[] dbContexts)
         {
             _logger = logger;
-
             _dbContexts = new List<DbContext>(dbContexts);
         }
 
         /// <summary>
         /// Apply migrations for provided contexts.
         /// </summary>
-        public async Task ApplyMigrations()
+        public async Task ApplyMigrationsAsync()
         {
             foreach (var dbContext in _dbContexts)
             {
@@ -44,7 +42,7 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <summary>
         /// Delete migrations for provided contexts.
         /// </summary>
-        public async Task DeleteMigrations()
+        public async Task DeleteMigrationsAsync()
         {
             foreach (var dbContext in _dbContexts.Reverse())
             {
