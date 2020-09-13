@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30225.117
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9DA1479D-F682-4968-B117-DAE448373DC9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{13C8AF5A-A17E-483D-B22D-8B4F4ADB6BD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GodelTech.Database.EntityFrameworkCore", "src\GodelTech.Database.EntityFrameworkCore\GodelTech.Database.EntityFrameworkCore.csproj", "{FD5664BD-8CC3-46E2-8FF2-9297270B6ABF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GodelTech.Database.EntityFrameworkCore.Tests", "test\GodelTech.Database.EntityFrameworkCore.Tests\GodelTech.Database.EntityFrameworkCore.Tests.csproj", "{14FD81C0-6EE2-4ED1-9E7C-A7FC2F1ED6B5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FD5664BD-8CC3-46E2-8FF2-9297270B6ABF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD5664BD-8CC3-46E2-8FF2-9297270B6ABF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD5664BD-8CC3-46E2-8FF2-9297270B6ABF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD5664BD-8CC3-46E2-8FF2-9297270B6ABF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14FD81C0-6EE2-4ED1-9E7C-A7FC2F1ED6B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14FD81C0-6EE2-4ED1-9E7C-A7FC2F1ED6B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14FD81C0-6EE2-4ED1-9E7C-A7FC2F1ED6B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14FD81C0-6EE2-4ED1-9E7C-A7FC2F1ED6B5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FD5664BD-8CC3-46E2-8FF2-9297270B6ABF} = {9DA1479D-F682-4968-B117-DAE448373DC9}
+		{14FD81C0-6EE2-4ED1-9E7C-A7FC2F1ED6B5} = {13C8AF5A-A17E-483D-B22D-8B4F4ADB6BD3}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {174C93B4-A2F8-4589-B760-4DF4E9DE8938}
+	EndGlobalSection
+EndGlobal
