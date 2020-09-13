@@ -14,7 +14,6 @@ namespace GodelTech.Database.EntityFrameworkCore
     public class DatabaseServiceBase
     {
         private readonly ILogger _logger;
-
         private readonly IList<DbContext> _dbContexts;
 
         /// <summary>
@@ -25,7 +24,6 @@ namespace GodelTech.Database.EntityFrameworkCore
         protected DatabaseServiceBase(ILogger logger, params DbContext[] dbContexts)
         {
             _logger = logger;
-
             _dbContexts = new List<DbContext>(dbContexts);
         }
 

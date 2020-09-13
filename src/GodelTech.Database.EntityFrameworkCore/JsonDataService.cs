@@ -40,13 +40,13 @@ namespace GodelTech.Database.EntityFrameworkCore
 
         private static IConfigurationRoot BuildConfiguration(IHostEnvironment hostEnvironment, string folderPath, string fileName) =>
             new ConfigurationBuilder()
-                .SetBasePath(Path.GetFullPath(Path.Combine(hostEnvironment.ContentRootPath, folderPath)))
+                .SetBasePath(Path.Combine(hostEnvironment.ContentRootPath, folderPath))
                 .AddJsonFile($"{fileName}.json")
                 .AddJsonFile($"{fileName}.{hostEnvironment.EnvironmentName}.json", true)
                 .AddEnvironmentVariables()
                 .Build();
 
-        private IList<TEntity> GetList()
+        private IList<TEntity> GetDataItems()
         {
             var configuration = BuildConfiguration(_hostEnvironment, _folderPath, typeof(TEntity).Name);
 
@@ -59,7 +59,7 @@ namespace GodelTech.Database.EntityFrameworkCore
         public async Task ApplyDataAsync()
         {
             _logger.LogInformation("Apply data: {entity}", typeof(TEntity).Name);
-            foreach (var item in GetList())
+            foreach (var item in GetDataItems())
             {
                 if (_dbContext.Set<TEntity>().Any(x => x.Id.Equals(item.Id)))
                 {
