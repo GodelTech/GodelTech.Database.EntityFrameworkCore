@@ -32,7 +32,7 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <summary>
         /// Apply migrations for provided contexts.
         /// </summary>
-        public async Task ApplyMigrations()
+        public async Task ApplyMigrationsAsync()
         {
             foreach (var dbContext in _dbContexts)
             {
@@ -44,7 +44,7 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <summary>
         /// Delete migrations for provided contexts.
         /// </summary>
-        public async Task DeleteMigrations()
+        public async Task DeleteMigrationsAsync()
         {
             foreach (var dbContext in _dbContexts.Reverse())
             {
