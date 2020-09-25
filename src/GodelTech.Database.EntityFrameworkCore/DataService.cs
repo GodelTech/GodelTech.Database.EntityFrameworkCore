@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace GodelTech.Database.EntityFrameworkCore
@@ -78,18 +79,19 @@ namespace GodelTech.Database.EntityFrameworkCore
         {
             _logger.LogInformation("Apply data: {item}", typeof(TItem).Name);
 
-            var entityType = _dbContext.Model.FindEntityType(typeof(TItem));
-            var schema = entityType.GetSchema();
-            var tableName = entityType.GetTableName();
+            var items = GetDataItems();
 
-            if (_enableIdentityInsert)
+            if (items == null)
             {
-                _dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT {schema}.{tableName} ON", schema, tableName);
+                _logger.LogWarning("Empty data: {item}", typeof(TItem).Name);
+                return;
             }
 
-            foreach (var item in GetDataItems())
+            foreach (var item in items)
             {
-                if (_dbContext.Set<TItem>().Any(x => _propertyToCompare(x).Equals(_propertyToCompare(item))))
+                Expression<Func<TItem, bool>> predicate = x => _propertyToCompare(x).Equals(_propertyToCompare(item));
+
+                if (_dbContext.Set<TItem>().AsNoTracking().Any(predicate.Compile()))
                 {
                     _logger.LogInformation("Update item: {property}", _propertyToCompare(item));
                     _dbContext.Set<TItem>().Update(item);
@@ -101,12 +103,34 @@ namespace GodelTech.Database.EntityFrameworkCore
                 }
             }
 
-            await _dbContext.SaveChangesAsync();
-
+            _logger.LogInformation("Saving changes...");
             if (_enableIdentityInsert)
             {
-                _dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT {schema}.{tableName} OFF", schema, tableName);
+                var entityType = _dbContext.Model.FindEntityType(typeof(TItem));
+                var schema = entityType.GetSchema();
+                var tableName = entityType.GetTableName();
+
+                _dbContext.Database.OpenConnection();
+                try
+                {
+                    _dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] ON;");
+                    await _dbContext.SaveChangesAsync();
+                    _dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;");
+                }
+                catch
+                {
+                    _logger.LogError("Error on save changes");
+                }
+                finally
+                {
+                    _dbContext.Database.CloseConnection();
+                }
             }
+            else
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            _logger.LogInformation("Changes saved successfully");
         }
     }
 }
