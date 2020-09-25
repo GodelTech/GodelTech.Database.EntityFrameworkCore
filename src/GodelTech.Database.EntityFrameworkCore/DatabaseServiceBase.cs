@@ -1,5 +1,4 @@
-﻿using GodelTech.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Logging;
@@ -69,13 +68,12 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <summary>
         /// Registers data service instance.
         /// </summary>
-        /// <typeparam name="TEntity">The type of the T entity.</typeparam>
-        /// <typeparam name="TType">The type of the T type.</typeparam>
+        /// <typeparam name="TItem">The type of the T item.</typeparam>
         /// <param name="dataService">The data service.</param>
-        protected void RegisterDataService<TEntity, TType>(IDataService dataService)
-            where TEntity : class, IEntity<TType>
+        protected void RegisterDataService<TItem>(IDataService dataService)
+            where TItem : class
         {
-            _dataServices[typeof(TEntity)] = dataService;
+            _dataServices[typeof(TItem)] = dataService;
         }
     }
 }
