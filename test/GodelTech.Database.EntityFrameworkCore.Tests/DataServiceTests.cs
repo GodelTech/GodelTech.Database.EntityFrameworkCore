@@ -7,7 +7,7 @@ using Xunit;
 
 namespace GodelTech.Database.EntityFrameworkCore.Tests
 {
-    public class DataServiceBaseTests
+    public class DataServiceTests
     {
         [Fact]
         public void Inherit_IUnitOfWork()
@@ -18,7 +18,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
             var mockLogger = new Mock<ILogger>(MockBehavior.Strict);
 
             // Act
-            var jsonDataService = new DataService<FakeItem, int>("", mockDbContext.Object, x => x.Id, mockHostEnvironment.Object, mockLogger.Object);
+            var jsonDataService = new DataService<FakeItem, int>("", mockDbContext.Object, true, x => x.Id, mockHostEnvironment.Object, mockLogger.Object);
 
             // Assert
             Assert.IsAssignableFrom<IDataService>(jsonDataService);
