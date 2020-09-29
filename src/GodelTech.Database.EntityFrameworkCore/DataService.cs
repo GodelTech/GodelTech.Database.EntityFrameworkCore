@@ -60,10 +60,6 @@ namespace GodelTech.Database.EntityFrameworkCore
                 return;
             }
 
-            var entityType = _dbContext.Model.FindEntityType(typeof(TItem));
-            var schema = entityType.GetSchema();
-            var tableName = entityType.GetTableName();
-
             foreach (var item in items)
             {
                 Expression<Func<TItem, bool>> predicate = x => _propertyToCompare(x).Equals(_propertyToCompare(item));
@@ -81,6 +77,10 @@ namespace GodelTech.Database.EntityFrameworkCore
             }
 
             _logger.LogInformation("Saving changes...");
+
+            var entityType = _dbContext.Model.FindEntityType(typeof(TItem));
+            var schema = entityType.GetSchema();
+            var tableName = entityType.GetTableName();
 
             if (_enableIdentityInsert)
             {

@@ -39,7 +39,7 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// Get data.
         /// </summary>
         /// <returns><cref>IList{TItem}</cref>.</returns>
-        protected IList<TItem> GetDataItems()
+        protected virtual IList<TItem> GetDataItems()
         {
             _logger.LogInformation("Get configuration: {item}", typeof(TItem).Name);
             var configuration = BuildConfiguration(_hostEnvironment, _folderPath, typeof(TItem).Name);
