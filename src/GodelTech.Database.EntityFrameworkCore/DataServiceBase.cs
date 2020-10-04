@@ -7,15 +7,14 @@ using System.Threading.Tasks;
 
 namespace GodelTech.Database.EntityFrameworkCore
 {
-    public abstract class DataServiceBase<TItem, TType> : IDataService
+    public abstract class DataServiceBase<TItem> : IDataService
         where TItem : class
     {
         private readonly string _folderPath;
         private readonly IHostEnvironment _hostEnvironment;
-        private readonly ILogger _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataServiceBase{TItem, TType}"/> class.
+        /// Initializes a new instance of the <see cref="DataServiceBase{TItem}"/> class.
         /// </summary>
         /// <param name="folderPath">The folder path.</param>
         /// <param name="hostEnvironment">The host environment.</param>
@@ -24,8 +23,14 @@ namespace GodelTech.Database.EntityFrameworkCore
         {
             _folderPath = folderPath;
             _hostEnvironment = hostEnvironment;
-            _logger = logger;
+            Logger = logger;
         }
+
+        /// <summary>
+        /// Gets the logger.
+        /// </summary>
+        /// <value>The logger.</value>
+        protected readonly ILogger Logger;
 
         private static IConfigurationRoot BuildConfiguration(IHostEnvironment hostEnvironment, string folderPath, string fileName) =>
             new ConfigurationBuilder()
@@ -41,10 +46,10 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <returns><cref>IList{TItem}</cref>.</returns>
         protected virtual IList<TItem> GetDataItems()
         {
-            _logger.LogInformation("Get configuration: {item}", typeof(TItem).Name);
+            Logger.LogInformation("Get configuration: {item}", typeof(TItem).Name);
             var configuration = BuildConfiguration(_hostEnvironment, _folderPath, typeof(TItem).Name);
 
-            _logger.LogInformation("Get data: {item}", typeof(TItem).Name);
+            Logger.LogInformation("Get data: {item}", typeof(TItem).Name);
             return configuration.GetSection("Data").Get<IList<TItem>>();
         }
 

@@ -13,12 +13,11 @@ namespace GodelTech.Database.EntityFrameworkCore
     /// </summary>
     /// <typeparam name="TItem">The type of the T item.</typeparam>
     /// <typeparam name="TType">The type of the T type.</typeparam>
-    public class DataService<TItem, TType> : DataServiceBase<TItem, TType>
+    public class DataService<TItem, TType> : DataServiceBase<TItem>
         where TItem : class
     {
         private readonly DbContext _dbContext;
         private readonly Func<TItem, TType> _propertyToCompare;
-        private readonly ILogger _logger;
         private readonly bool _enableIdentityInsert;
 
         /// <summary>
@@ -41,7 +40,6 @@ namespace GodelTech.Database.EntityFrameworkCore
         {
             _dbContext = dbContext;
             _propertyToCompare = propertyToCompare;
-            _logger = logger;
             _enableIdentityInsert = enableIdentityInsert;
         }
 
@@ -50,13 +48,11 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// </summary>
         public override async Task ApplyDataAsync()
         {
-            _logger.LogInformation("Apply data: {item}", typeof(TItem).Name);
-
             var items = GetDataItems();
 
             if (items == null)
             {
-                _logger.LogWarning("Empty data: {item}", typeof(TItem).Name);
+                Logger.LogWarning("Empty data: {item}", typeof(TItem).Name);
                 return;
             }
 
@@ -66,17 +62,17 @@ namespace GodelTech.Database.EntityFrameworkCore
 
                 if (_dbContext.Set<TItem>().AsNoTracking().Any(predicate.Compile()))
                 {
-                    _logger.LogInformation("Update item: {property}", _propertyToCompare(item));
+                    Logger.LogInformation("Update item: {property}", _propertyToCompare(item));
                     _dbContext.Set<TItem>().Update(item);
                 }
                 else
                 {
-                    _logger.LogInformation("Add item: {property}", _propertyToCompare(item));
+                    Logger.LogInformation("Add item: {property}", _propertyToCompare(item));
                     await _dbContext.Set<TItem>().AddAsync(item);
                 }
             }
 
-            _logger.LogInformation("Saving changes...");
+            Logger.LogInformation("Saving changes...");
 
             var entityType = _dbContext.Model.FindEntityType(typeof(TItem));
             var schema = entityType.GetSchema();
@@ -91,11 +87,11 @@ namespace GodelTech.Database.EntityFrameworkCore
                     await _dbContext.SaveChangesAsync();
                     _dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;");
 
-                    _logger.LogInformation("Changes saved successfully");
+                    Logger.LogInformation("Changes saved successfully");
                 }
                 catch
                 {
-                    _logger.LogError("Error on save changes");
+                    Logger.LogError("Error on save changes");
                 }
                 finally
                 {
@@ -106,7 +102,7 @@ namespace GodelTech.Database.EntityFrameworkCore
             {
                 await _dbContext.SaveChangesAsync();
 
-                _logger.LogInformation("Changes saved successfully");
+                Logger.LogInformation("Changes saved successfully");
             }
         }
     }

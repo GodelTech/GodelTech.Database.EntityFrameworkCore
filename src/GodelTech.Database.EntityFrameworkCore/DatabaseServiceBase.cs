@@ -37,7 +37,7 @@ namespace GodelTech.Database.EntityFrameworkCore
         {
             foreach (var dbContext in _dbContexts)
             {
-                _logger.LogInformation("Apply migrations: {dbContext}", dbContext.GetType().Name);
+                _logger.LogInformation("Apply migrations: {dbContext}", dbContext.GetType().FullName);
                 await dbContext.Database.MigrateAsync();
             }
         }
@@ -49,7 +49,7 @@ namespace GodelTech.Database.EntityFrameworkCore
         {
             foreach (var dbContext in _dbContexts.Reverse())
             {
-                _logger.LogInformation("Delete migrations: {dbContext}", dbContext.GetType().Name);
+                _logger.LogInformation("Delete migrations: {dbContext}", dbContext.GetType().FullName);
                 await dbContext.GetService<IMigrator>().MigrateAsync("0");
             }
         }
@@ -61,6 +61,7 @@ namespace GodelTech.Database.EntityFrameworkCore
         {
             foreach (var dataService in _dataServices)
             {
+                _logger.LogInformation("Apply data: {dataService}", dataService.Value.GetType().FullName);
                 await dataService.Value.ApplyDataAsync();
             }
         }
