@@ -69,12 +69,10 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <summary>
         /// Registers data service instance.
         /// </summary>
-        /// <typeparam name="TItem">The type of the T item.</typeparam>
         /// <param name="dataService">The data service.</param>
-        protected void RegisterDataService<TItem>(IDataService dataService)
-            where TItem : class
+        protected void RegisterDataService(IDataService dataService)
         {
-            _dataServices[typeof(TItem)] = dataService;
+            _dataServices[dataService.GetType()] = dataService;
         }
     }
 }
