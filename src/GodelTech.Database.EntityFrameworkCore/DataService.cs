@@ -36,7 +36,10 @@ namespace GodelTech.Database.EntityFrameworkCore
             Func<TItem, TType> propertyToCompare,
             IHostEnvironment hostEnvironment,
             ILogger logger)
-            : base(folderPath, hostEnvironment, logger)
+            : base(
+                folderPath,
+                hostEnvironment,
+                logger)
         {
             _dbContext = dbContext;
             _propertyToCompare = propertyToCompare;
@@ -80,22 +83,18 @@ namespace GodelTech.Database.EntityFrameworkCore
 
             if (_enableIdentityInsert)
             {
-                _dbContext.Database.OpenConnection();
+                await _dbContext.Database.OpenConnectionAsync();
                 try
                 {
-                    _dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] ON;");
+                    await _dbContext.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] ON;");
                     await _dbContext.SaveChangesAsync();
-                    _dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;");
+                    await _dbContext.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;");
 
                     Logger.LogInformation("Changes saved successfully");
                 }
-                catch
-                {
-                    Logger.LogError("Error on save changes");
-                }
                 finally
                 {
-                    _dbContext.Database.CloseConnection();
+                    await _dbContext.Database.CloseConnectionAsync();
                 }
             }
             else

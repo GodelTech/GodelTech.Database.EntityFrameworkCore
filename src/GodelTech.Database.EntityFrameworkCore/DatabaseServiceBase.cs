@@ -23,7 +23,9 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// </summary>
         /// <param name="logger">Logger.</param>
         /// <param name="dbContexts">Database contexts.</param>
-        protected DatabaseServiceBase(ILogger logger, params DbContext[] dbContexts)
+        protected DatabaseServiceBase(
+            ILogger logger,
+            params DbContext[] dbContexts)
         {
             _logger = logger;
             _dbContexts = new List<DbContext>(dbContexts);
@@ -72,6 +74,8 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <param name="dataService">The data service.</param>
         protected void RegisterDataService(IDataService dataService)
         {
+            if (dataService == null) throw new ArgumentNullException(nameof(dataService));
+
             _dataServices[dataService.GetType()] = dataService;
         }
     }
