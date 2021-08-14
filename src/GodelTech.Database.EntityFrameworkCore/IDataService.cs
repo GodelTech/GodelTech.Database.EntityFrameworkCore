@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
+[assembly: CLSCompliant(true)]
 namespace GodelTech.Database.EntityFrameworkCore
 {
     /// <summary>

@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace GodelTech.Database.EntityFrameworkCore
 {
+    /// <summary>
+    /// Data service base.
+    /// </summary>
+    /// <typeparam name="TItem">The type of the T item.</typeparam>
     public abstract class DataServiceBase<TItem> : IDataService
         where TItem : class
     {
@@ -19,7 +23,7 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <param name="folderPath">The folder path.</param>
         /// <param name="hostEnvironment">The host environment.</param>
         /// <param name="logger">The logger.</param>
-        public DataServiceBase(string folderPath, IHostEnvironment hostEnvironment, ILogger logger)
+        protected DataServiceBase(string folderPath, IHostEnvironment hostEnvironment, ILogger logger)
         {
             _folderPath = folderPath;
             _hostEnvironment = hostEnvironment;
