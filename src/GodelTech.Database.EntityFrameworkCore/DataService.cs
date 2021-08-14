@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace GodelTech.Database.EntityFrameworkCore
 {
@@ -23,22 +24,25 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <summary>
         /// Initializes a new instance of the <see cref="DataService{TItem, TType}"/> class.
         /// </summary>
+        /// <param name="configurationBuilder">The configuration builder.</param>
+        /// <param name="hostEnvironment">The host environment.</param>
         /// <param name="folderPath">The folder path.</param>
         /// <param name="dbContext">The database context.</param>
         /// <param name="enableIdentityInsert">Enable IDENTITY_INSERT to insert an explicit value to id property.</param>
         /// <param name="propertyToCompare">The property selector to compare by.</param>
-        /// <param name="hostEnvironment">The host environment.</param>
         /// <param name="logger">The logger.</param>
         public DataService(
+            IConfigurationBuilder configurationBuilder,
+            IHostEnvironment hostEnvironment,
             string folderPath,
             DbContext dbContext,
             bool enableIdentityInsert,
             Func<TItem, TType> propertyToCompare,
-            IHostEnvironment hostEnvironment,
             ILogger logger)
             : base(
-                folderPath,
+                configurationBuilder,
                 hostEnvironment,
+                folderPath,
                 logger)
         {
             _dbContext = dbContext;
@@ -51,7 +55,7 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// </summary>
         public override async Task ApplyDataAsync()
         {
-            var items = GetDataItems();
+            var items = GetData();
 
             if (items == null)
             {

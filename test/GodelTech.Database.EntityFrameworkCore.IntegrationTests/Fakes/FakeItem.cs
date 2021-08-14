@@ -1,4 +1,4 @@
-﻿namespace GodelTech.Database.EntityFrameworkCore.Tests.Fakes
+﻿namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
 {
     public class FakeItem
     {
