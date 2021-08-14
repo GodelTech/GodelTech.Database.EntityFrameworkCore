@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq.Expressions;
 using GodelTech.Database.EntityFrameworkCore.Tests.Fakes;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.EnvironmentVariables;
+using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -13,10 +15,11 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
 {
     public class DataServiceBaseTests
     {
-        private Mock<IConfigurationBuilder> _mockConfigurationBuilder;
-        private Mock<IHostEnvironment> _mockHostEnvironment;
         private const string FolderPath = "Fakes/Json";
-        private Mock<ILogger> _mockLogger;
+
+        private readonly Mock<IConfigurationBuilder> _mockConfigurationBuilder;
+        private readonly Mock<IHostEnvironment> _mockHostEnvironment;
+        private readonly Mock<ILogger> _mockLogger;
 
         private readonly FakeDataServiceBase _service;
 
@@ -40,7 +43,21 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
             // Arrange
             const string environmentName = "Development";
 
-            var expectedResult = new List<FakeItem>();
+            var expectedResult = new List<FakeItem>
+            {
+                new FakeItem
+                {
+                    Id = 1
+                },
+                new FakeItem
+                {
+                    Id = 2
+                },
+                new FakeItem
+                {
+                    Id = 3
+                }
+            };
 
             Expression<Action<ILogger>> loggerExpressionConfiguration = x => x.Log(
                 LogLevel.Information,
@@ -58,11 +75,55 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
                 .Setup(x => x.ContentRootPath)
                 .Returns(Directory.GetCurrentDirectory());
 
+            _mockConfigurationBuilder
+                .Setup(x => x.Properties)
+                .Returns(new Dictionary<string, object>());
+
+            _mockConfigurationBuilder
+                .Setup(
+                    x => x.Add(
+                        It.Is<JsonConfigurationSource>(
+                            y => y.Path == $"{nameof(FakeItem)}.json"
+                                 && y.Optional == false
+                        )
+                    )
+                )
+                .Returns(_mockConfigurationBuilder.Object);
+
             _mockHostEnvironment
                 .Setup(x => x.EnvironmentName)
                 .Returns(environmentName);
 
-            Expression<Action<ILogger>> loggerExpressionDate = x => x.Log(
+            _mockConfigurationBuilder
+                .Setup(
+                    x => x.Add(
+                        It.Is<JsonConfigurationSource>(
+                            y => y.Path == $"{nameof(FakeItem)}.{environmentName}.json"
+                                 && y.Optional
+                        )
+                    )
+                )
+                .Returns(_mockConfigurationBuilder.Object);
+
+            _mockConfigurationBuilder
+                .Setup(
+                    x => x.Add(
+                        It.Is<EnvironmentVariablesConfigurationSource>(
+                            y => string.IsNullOrEmpty(y.Prefix)
+                        )
+                    )
+                )
+                .Returns(_mockConfigurationBuilder.Object);
+
+            var configurationRoot = new ConfigurationBuilder()
+                .AddJsonFile($"{FolderPath}/{nameof(FakeItem)}.json")
+                .Build();
+
+            _mockConfigurationBuilder
+                .Setup(x => x.Build())
+                .Returns(configurationRoot);
+
+            Expression<Action<ILogger>> loggerExpressionData = x => x.Log(
                 LogLevel.Information,
                 0,
                 It.Is<It.IsAnyType>((v, t) =>
@@ -72,7 +133,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
                 null,
                 It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)
             );
-            _mockLogger.Setup(loggerExpressionDate);
+            _mockLogger.Setup(loggerExpressionData);
 
             // Act
             var result = _service.ExposedGetData();
@@ -86,15 +147,59 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
                     Times.Once
                 );
 
+            _mockConfigurationBuilder
+                .Verify(
+                    x => x.Properties,
+                    Times.Once
+                );
+
+            _mockConfigurationBuilder
+                .Verify(
+                    x => x.Add(
+                        It.Is<JsonConfigurationSource>(
+                            y => y.Path == $"{nameof(FakeItem)}.json"
+                                 && y.Optional == false
+                        )
+                    ),
+                    Times.Once
+                );
+
             _mockHostEnvironment
                 .Verify(
                     x => x.EnvironmentName,
                     Times.Once
                 );
 
-            _mockLogger.Verify(loggerExpressionDate, Times.Once);
+            _mockConfigurationBuilder
+                .Verify(
+                    x => x.Add(
+                        It.Is<JsonConfigurationSource>(
+                            y => y.Path == $"{nameof(FakeItem)}.{environmentName}.json"
+                                 && y.Optional
+                        )
+                    ),
+                    Times.Once
+                );
 
-            Assert.Equal(expectedResult, result);
+            _mockConfigurationBuilder
+                .Verify(
+                    x => x.Add(
+                        It.Is<EnvironmentVariablesConfigurationSource>(
+                            y => string.IsNullOrEmpty(y.Prefix)
+                        )
+                    ),
+                    Times.Once
+                );
+
+            _mockConfigurationBuilder
+                .Verify(
+                    x => x.Build(),
+                    Times.Once
+                );
+
+            _mockLogger.Verify(loggerExpressionData, Times.Once);
+
+            Assert.Equal(expectedResult, result, new FakeItemEqualityComparer());
         }
     }
 }

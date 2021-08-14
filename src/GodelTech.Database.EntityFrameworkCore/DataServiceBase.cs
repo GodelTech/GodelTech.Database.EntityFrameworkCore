@@ -63,7 +63,9 @@ namespace GodelTech.Database.EntityFrameworkCore
             );
 
             Logger.LogInformation("Get data: {item}", typeof(TItem).Name);
-            return configuration.GetSection("Data").Get<IList<TItem>>();
+            return configuration
+                .GetSection("Data")
+                .Get<IList<TItem>>();
         }
 
         private static IConfigurationRoot BuildConfiguration(

@@ -34,4 +34,10 @@
 		<ProjectReference Include="..\..\src\GodelTech.Database.EntityFrameworkCore\GodelTech.Database.EntityFrameworkCore.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<None Update="Fakes\Json\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
 </Project>
