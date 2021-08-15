@@ -81,16 +81,16 @@ namespace GodelTech.Database.EntityFrameworkCore
 
             Logger.LogInformation("Saving changes...");
 
-            var entityType = _dbContext.Model.FindEntityType(typeof(TEntity));
-            var schema = entityType.GetSchema();
-            var tableName = entityType.GetTableName();
-
             if (_enableIdentityInsert)
             {
                 await _dbContext.Database.OpenConnectionAsync();
 
                 try
                 {
+                    var entityType = _dbContext.Model.FindEntityType(typeof(TEntity));
+                    var schema = entityType.GetSchema();
+                    var tableName = entityType.GetTableName();
+
                     await _dbContext.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] ON;");
                     await _dbContext.SaveChangesAsync();
                     await _dbContext.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;");

@@ -54,6 +54,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             {
                 new object[]
                 {
+                    false,
                     new Collection<FakeEntity>(),
                     new Collection<FakeEntity>
                     {
@@ -74,6 +75,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
                 },
                 new object[]
                 {
+                    false,
                     new Collection<FakeEntity>
                     {
                         new FakeEntity
@@ -113,7 +115,8 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
 
         [Theory]
         [MemberData(nameof(ApplyDataMemberData))]
-        public async Task ApplyDataAsync_Success(
+        public async Task ApplyDataAsync_WithEnabledIdentityInsert_Success(
+            bool enableIdentityInsert,
             Collection<FakeEntity> existingEntities,
             Collection<FakeEntity> entities,
             Collection<FakeEntity> expectedEntities)
@@ -132,7 +135,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
                 _hostingEnvironment,
                 "Test FolderPath",
                 _dbContext,
-                false,
+                enableIdentityInsert,
                 x => x.Id,
                 _logger
             );
