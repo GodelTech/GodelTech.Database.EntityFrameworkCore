@@ -30,20 +30,20 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
             _mockLogger = new Mock<ILogger>(MockBehavior.Strict);
         }
 
-        public static IEnumerable<object[]> ItemsIsNullOrEmptyMemberData =>
+        public static IEnumerable<object[]> EntitiesIsNullOrEmptyMemberData =>
             new Collection<object[]>
             {
                 new object[] { true, null },
                 new object[] { false, null },
-                new object[] { true, new List<FakeItem>() },
-                new object[] { false, new List<FakeItem>() }
+                new object[] { true, new List<FakeEntity>() },
+                new object[] { false, new List<FakeEntity>() }
             };
 
         [Theory]
-        [MemberData(nameof(ItemsIsNullOrEmptyMemberData))]
-        public async Task ApplyDataAsync_WhenItemsIsNullOrEmpty(
+        [MemberData(nameof(EntitiesIsNullOrEmptyMemberData))]
+        public async Task ApplyDataAsync_WhenEntitiesIsNullOrEmpty(
             bool enableIdentityInsert,
-            IList<FakeItem> items)
+            IList<FakeEntity> entities)
         {
             // Arrange
             var service = new FakeDataService(
@@ -54,7 +54,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
                 enableIdentityInsert,
                 x => x.Id,
                 _mockLogger.Object,
-                items
+                entities
             );
 
             Expression<Action<ILogger>> loggerExpression = x => x.Log(
@@ -62,7 +62,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
                 0,
                 It.Is<It.IsAnyType>((v, t) =>
                     v.ToString() ==
-                    $"Empty data: {nameof(FakeItem)}"
+                    $"Empty data: {nameof(FakeEntity)}"
                 ),
                 null,
                 It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)

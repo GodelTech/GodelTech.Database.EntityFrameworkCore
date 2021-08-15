@@ -7,9 +7,9 @@ using Microsoft.Extensions.Logging;
 
 namespace GodelTech.Database.EntityFrameworkCore.Tests.Fakes
 {
-    public class FakeDataService : DataService<FakeItem, int>
+    public class FakeDataService : DataService<FakeEntity, int>
     {
-        private readonly IList<FakeItem> _items;
+        private readonly IList<FakeEntity> _entities;
 
         public FakeDataService(
             IConfigurationBuilder configurationBuilder,
@@ -17,9 +17,9 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests.Fakes
             string folderPath,
             DbContext dbContext,
             bool enableIdentityInsert,
-            Func<FakeItem, int> propertyToCompare,
+            Func<FakeEntity, int> propertyToCompare,
             ILogger logger,
-            IList<FakeItem> items)
+            IList<FakeEntity> entities)
             : base(
                 configurationBuilder,
                 hostEnvironment,
@@ -29,12 +29,12 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests.Fakes
                 propertyToCompare,
                 logger)
         {
-            _items = items;
+            _entities = entities;
         }
 
-        protected override IList<FakeItem> GetData()
+        protected override IList<FakeEntity> GetData()
         {
-            return _items;
+            return _entities;
         }
     }
 }

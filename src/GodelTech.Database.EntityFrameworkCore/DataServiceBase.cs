@@ -10,16 +10,16 @@ namespace GodelTech.Database.EntityFrameworkCore
     /// <summary>
     /// Data service base.
     /// </summary>
-    /// <typeparam name="TItem">The type of the T item.</typeparam>
-    public abstract class DataServiceBase<TItem> : IDataService
-        where TItem : class
+    /// <typeparam name="TEntity">The type of the T entity.</typeparam>
+    public abstract class DataServiceBase<TEntity> : IDataService
+        where TEntity : class
     {
         private readonly IConfigurationBuilder _configurationBuilder;
         private readonly IHostEnvironment _hostEnvironment;
         private readonly string _folderPath;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataServiceBase{TItem}"/> class.
+        /// Initializes a new instance of the <see cref="DataServiceBase{TEntity}"/> class.
         /// </summary>
         /// <param name="configurationBuilder">The configuration builder.</param>
         /// <param name="hostEnvironment">The host environment.</param>
@@ -51,21 +51,21 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <summary>
         /// Get data.
         /// </summary>
-        /// <returns><cref>IList{TItem}</cref>.</returns>
-        protected virtual IList<TItem> GetData()
+        /// <returns><cref>IList{TEntity}</cref>.</returns>
+        protected virtual IList<TEntity> GetData()
         {
-            Logger.LogInformation("Get configuration: {item}", typeof(TItem).Name);
+            Logger.LogInformation("Get configuration: {entity}", typeof(TEntity).Name);
             var configuration = BuildConfiguration(
                 _configurationBuilder,
                 _hostEnvironment,
                 _folderPath,
-                typeof(TItem).Name
+                typeof(TEntity).Name
             );
 
-            Logger.LogInformation("Get data: {item}", typeof(TItem).Name);
+            Logger.LogInformation("Get data: {entity}", typeof(TEntity).Name);
             return configuration
                 .GetSection("Data")
-                .Get<IList<TItem>>();
+                .Get<IList<TEntity>>();
         }
 
         private static IConfigurationRoot BuildConfiguration(

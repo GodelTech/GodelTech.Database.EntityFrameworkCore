@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace GodelTech.Database.EntityFrameworkCore.Tests.Fakes
+namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
 {
-    public class FakeItemEqualityComparer : IEqualityComparer<FakeItem>
+    public class FakeEntityEqualityComparer : IEqualityComparer<FakeEntity>
     {
-        public bool Equals(FakeItem x, FakeItem y)
+        public bool Equals(FakeEntity x, FakeEntity y)
         {
             // Check whether the compared objects reference the same data
             if (ReferenceEquals(x, y)) return true;
@@ -17,7 +17,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests.Fakes
             return x.Id.Equals(y.Id);
         }
 
-        public int GetHashCode([DisallowNull] FakeItem obj)
+        public int GetHashCode([DisallowNull] FakeEntity obj)
         {
             // Check whether the object is null
             if (ReferenceEquals(obj, null)) return 0;

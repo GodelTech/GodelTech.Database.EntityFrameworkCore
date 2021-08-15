@@ -11,6 +11,8 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
 
         }
 
+        public DbSet<FakeEntity> FakeEntities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             if (modelBuilder == null) throw new ArgumentNullException(nameof(modelBuilder));
@@ -18,8 +20,8 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
             base.OnModelCreating(modelBuilder);
 
             modelBuilder
-                .Entity<FakeItem>()
-                .ToTable("FakeItem");
+                .Entity<FakeEntity>()
+                .ToTable("FakeEntity");
         }
     }
 }

@@ -38,22 +38,22 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
         }
 
         [Fact]
-        public void GetDataItems_Success()
+        public void GetData_Success()
         {
             // Arrange
             const string environmentName = "Development";
 
-            var expectedResult = new List<FakeItem>
+            var expectedResult = new List<FakeEntity>
             {
-                new FakeItem
+                new FakeEntity
                 {
                     Id = 1
                 },
-                new FakeItem
+                new FakeEntity
                 {
                     Id = 2
                 },
-                new FakeItem
+                new FakeEntity
                 {
                     Id = 3
                 }
@@ -64,7 +64,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
                 0,
                 It.Is<It.IsAnyType>((v, t) =>
                     v.ToString() ==
-                    $"Get configuration: {nameof(FakeItem)}"
+                    $"Get configuration: {nameof(FakeEntity)}"
                 ),
                 null,
                 It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)
@@ -83,7 +83,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
                 .Setup(
                     x => x.Add(
                         It.Is<JsonConfigurationSource>(
-                            y => y.Path == $"{nameof(FakeItem)}.json"
+                            y => y.Path == $"{nameof(FakeEntity)}.json"
                                  && y.Optional == false
                         )
                     )
@@ -98,7 +98,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
                 .Setup(
                     x => x.Add(
                         It.Is<JsonConfigurationSource>(
-                            y => y.Path == $"{nameof(FakeItem)}.{environmentName}.json"
+                            y => y.Path == $"{nameof(FakeEntity)}.{environmentName}.json"
                                  && y.Optional
                         )
                     )
@@ -116,7 +116,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
                 .Returns(_mockConfigurationBuilder.Object);
 
             var configurationRoot = new ConfigurationBuilder()
-                .AddJsonFile($"{FolderPath}/{nameof(FakeItem)}.json")
+                .AddJsonFile($"{FolderPath}/{nameof(FakeEntity)}.json")
                 .Build();
 
             _mockConfigurationBuilder
@@ -128,7 +128,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
                 0,
                 It.Is<It.IsAnyType>((v, t) =>
                     v.ToString() ==
-                    $"Get data: {nameof(FakeItem)}"
+                    $"Get data: {nameof(FakeEntity)}"
                 ),
                 null,
                 It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)
@@ -157,7 +157,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
                 .Verify(
                     x => x.Add(
                         It.Is<JsonConfigurationSource>(
-                            y => y.Path == $"{nameof(FakeItem)}.json"
+                            y => y.Path == $"{nameof(FakeEntity)}.json"
                                  && y.Optional == false
                         )
                     ),
@@ -174,7 +174,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
                 .Verify(
                     x => x.Add(
                         It.Is<JsonConfigurationSource>(
-                            y => y.Path == $"{nameof(FakeItem)}.{environmentName}.json"
+                            y => y.Path == $"{nameof(FakeEntity)}.{environmentName}.json"
                                  && y.Optional
                         )
                     ),
@@ -199,7 +199,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
 
             _mockLogger.Verify(loggerExpressionData, Times.Once);
 
-            Assert.Equal(expectedResult, result, new FakeItemEqualityComparer());
+            Assert.Equal(expectedResult, result, new FakeEntityEqualityComparer());
         }
     }
 }

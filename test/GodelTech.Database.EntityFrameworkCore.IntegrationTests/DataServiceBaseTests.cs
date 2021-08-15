@@ -37,20 +37,20 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
         }
 
         [Fact]
-        public void GetDataItems_Success()
+        public void GetData_Success()
         {
             // Arrange
-            var expectedResult = new List<FakeItem>
+            var expectedResult = new List<FakeEntity>
             {
-                new FakeItem
+                new FakeEntity
                 {
                     Id = 1
                 },
-                new FakeItem
+                new FakeEntity
                 {
                     Id = 2
                 },
-                new FakeItem
+                new FakeEntity
                 {
                     Id = 3
                 }
@@ -60,7 +60,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             var result = _service.ExposedGetData();
 
             // Assert
-            Assert.Equal(expectedResult, result, new FakeItemEqualityComparer());
+            Assert.Equal(expectedResult, result, new FakeEntityEqualityComparer());
         }
     }
 }

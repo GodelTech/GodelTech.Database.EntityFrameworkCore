@@ -12,17 +12,17 @@ namespace GodelTech.Database.EntityFrameworkCore
     /// <summary>
     /// Data service.
     /// </summary>
-    /// <typeparam name="TItem">The type of the T item.</typeparam>
+    /// <typeparam name="TEntity">The type of the T entity.</typeparam>
     /// <typeparam name="TType">The type of the T type.</typeparam>
-    public class DataService<TItem, TType> : DataServiceBase<TItem>
-        where TItem : class
+    public class DataService<TEntity, TType> : DataServiceBase<TEntity>
+        where TEntity : class
     {
         private readonly DbContext _dbContext;
-        private readonly Func<TItem, TType> _propertyToCompare;
+        private readonly Func<TEntity, TType> _propertyToCompare;
         private readonly bool _enableIdentityInsert;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DataService{TItem, TType}"/> class.
+        /// Initializes a new instance of the <see cref="DataService{TEntity, TType}"/> class.
         /// </summary>
         /// <param name="configurationBuilder">The configuration builder.</param>
         /// <param name="hostEnvironment">The host environment.</param>
@@ -37,7 +37,7 @@ namespace GodelTech.Database.EntityFrameworkCore
             string folderPath,
             DbContext dbContext,
             bool enableIdentityInsert,
-            Func<TItem, TType> propertyToCompare,
+            Func<TEntity, TType> propertyToCompare,
             ILogger logger)
             : base(
                 configurationBuilder,
@@ -55,33 +55,33 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// </summary>
         public override async Task ApplyDataAsync()
         {
-            var items = GetData();
+            var entities = GetData();
 
-            if (items == null || !items.Any())
+            if (entities == null || !entities.Any())
             {
-                Logger.LogWarning("Empty data: {item}", typeof(TItem).Name);
+                Logger.LogWarning("Empty data: {entity}", typeof(TEntity).Name);
                 return;
             }
 
-            foreach (var item in items)
+            foreach (var entity in entities)
             {
-                Expression<Func<TItem, bool>> predicate = x => _propertyToCompare(x).Equals(_propertyToCompare(item));
+                Expression<Func<TEntity, bool>> predicate = x => _propertyToCompare(x).Equals(_propertyToCompare(entity));
 
-                if (_dbContext.Set<TItem>().AsNoTracking().Any(predicate.Compile()))
+                if (_dbContext.Set<TEntity>().AsNoTracking().Any(predicate.Compile()))
                 {
-                    Logger.LogInformation("Update item: {property}", _propertyToCompare(item));
-                    _dbContext.Set<TItem>().Update(item);
+                    Logger.LogInformation("Update entity: {property}", _propertyToCompare(entity));
+                    _dbContext.Set<TEntity>().Update(entity);
                 }
                 else
                 {
-                    Logger.LogInformation("Add item: {property}", _propertyToCompare(item));
-                    await _dbContext.Set<TItem>().AddAsync(item);
+                    Logger.LogInformation("Add entity: {property}", _propertyToCompare(entity));
+                    await _dbContext.Set<TEntity>().AddAsync(entity);
                 }
             }
 
             Logger.LogInformation("Saving changes...");
 
-            var entityType = _dbContext.Model.FindEntityType(typeof(TItem));
+            var entityType = _dbContext.Model.FindEntityType(typeof(TEntity));
             var schema = entityType.GetSchema();
             var tableName = entityType.GetTableName();
 

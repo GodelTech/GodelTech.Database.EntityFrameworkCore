@@ -1,6 +1,6 @@
 ﻿namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
 {
-    public class FakeItem
+    public class FakeEntity
     {
         public int Id { get; set; }
     }

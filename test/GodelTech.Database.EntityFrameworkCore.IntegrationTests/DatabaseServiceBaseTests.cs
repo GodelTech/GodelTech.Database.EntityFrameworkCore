@@ -14,7 +14,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
         public DatabaseServiceBaseTests()
         {
             using var loggerFactory = new NullLoggerFactory();
-            var logger = new Logger<DataServiceBaseTests>(loggerFactory);
+            var logger = new Logger<DatabaseServiceBaseTests>(loggerFactory);
 
             var dbContextOptions = new DbContextOptionsBuilder<FakeDbContext>()
                 .UseSqlite("DataSource=:memory:")

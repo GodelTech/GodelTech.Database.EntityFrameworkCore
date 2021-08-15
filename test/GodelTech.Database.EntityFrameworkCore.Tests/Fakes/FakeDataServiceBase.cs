@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace GodelTech.Database.EntityFrameworkCore.Tests.Fakes
 {
-    public class FakeDataServiceBase : DataServiceBase<FakeItem>
+    public class FakeDataServiceBase : DataServiceBase<FakeEntity>
     {
         public FakeDataServiceBase(
             IConfigurationBuilder configurationBuilder,
@@ -27,7 +27,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests.Fakes
             return Task.CompletedTask;
         }
 
-        public IList<FakeItem> ExposedGetData()
+        public IList<FakeEntity> ExposedGetData()
         {
             return GetData();
         }
