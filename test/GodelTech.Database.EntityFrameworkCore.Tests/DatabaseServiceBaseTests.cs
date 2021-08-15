@@ -79,8 +79,11 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
             // Arrange
             var mockDataService = new Mock<IDataService>();
 
-            // Act & Assert
+            // Act
             _service.ExposedRegisterDataService(mockDataService.Object);
+
+            // Assert
+            Assert.NotNull(_service);
         }
     }
 }
