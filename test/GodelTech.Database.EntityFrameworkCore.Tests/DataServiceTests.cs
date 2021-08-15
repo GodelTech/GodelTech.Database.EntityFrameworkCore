@@ -53,9 +53,10 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
                 _mockDbContext.Object,
                 enableIdentityInsert,
                 x => x.Id,
-                _mockLogger.Object,
-                entities
+                _mockLogger.Object
             );
+
+            service.SetData(entities);
 
             Expression<Action<ILogger>> loggerExpression = x => x.Log(
                 LogLevel.Warning,

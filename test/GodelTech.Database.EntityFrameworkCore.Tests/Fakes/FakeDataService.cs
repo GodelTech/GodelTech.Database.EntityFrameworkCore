@@ -9,7 +9,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests.Fakes
 {
     public class FakeDataService : DataService<FakeEntity, int>
     {
-        private readonly IList<FakeEntity> _entities;
+        private IList<FakeEntity> _entities;
 
         public FakeDataService(
             IConfigurationBuilder configurationBuilder,
@@ -18,8 +18,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests.Fakes
             DbContext dbContext,
             bool enableIdentityInsert,
             Func<FakeEntity, int> propertyToCompare,
-            ILogger logger,
-            IList<FakeEntity> entities)
+            ILogger logger)
             : base(
                 configurationBuilder,
                 hostEnvironment,
@@ -28,6 +27,11 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests.Fakes
                 enableIdentityInsert,
                 propertyToCompare,
                 logger)
+        {
+
+        }
+
+        public void SetData(IList<FakeEntity> entities)
         {
             _entities = entities;
         }
