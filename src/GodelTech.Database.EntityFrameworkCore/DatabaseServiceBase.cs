@@ -12,7 +12,7 @@ namespace GodelTech.Database.EntityFrameworkCore
     /// <summary>
     /// Base class for DatabaseService.
     /// </summary>
-    public class DatabaseServiceBase
+    public abstract class DatabaseServiceBase
     {
         private readonly ILogger _logger;
         private readonly IList<DbContext> _dbContexts;
@@ -61,10 +61,10 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// </summary>
         public async Task ApplyDataAsync()
         {
-            foreach (var dataService in _dataServices)
+            foreach (var keyValuePair in _dataServices)
             {
-                _logger.LogInformation("Apply data: {dataService}", dataService.Value.GetType().FullName);
-                await dataService.Value.ApplyDataAsync();
+                _logger.LogInformation("Apply data: {dataService}", keyValuePair.Value.GetType().FullName);
+                await keyValuePair.Value.ApplyDataAsync();
             }
         }
 

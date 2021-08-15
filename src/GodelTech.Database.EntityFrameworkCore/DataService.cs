@@ -57,7 +57,7 @@ namespace GodelTech.Database.EntityFrameworkCore
         {
             var items = GetData();
 
-            if (items == null)
+            if (items == null || !items.Any())
             {
                 Logger.LogWarning("Empty data: {item}", typeof(TItem).Name);
                 return;
@@ -88,6 +88,7 @@ namespace GodelTech.Database.EntityFrameworkCore
             if (_enableIdentityInsert)
             {
                 await _dbContext.Database.OpenConnectionAsync();
+
                 try
                 {
                     await _dbContext.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] ON;");
