@@ -91,9 +91,9 @@ namespace GodelTech.Database.EntityFrameworkCore
                     var schema = entityType.GetSchema();
                     var tableName = entityType.GetTableName();
 
-                    await _dbContext.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] ON;");
+                    await ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] ON;");
                     await _dbContext.SaveChangesAsync();
-                    await _dbContext.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;");
+                    await ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;");
 
                     Logger.LogInformation("Changes saved successfully");
                 }
@@ -108,6 +108,15 @@ namespace GodelTech.Database.EntityFrameworkCore
 
                 Logger.LogInformation("Changes saved successfully");
             }
+        }
+
+        /// <summary>
+        /// Executes SQL.
+        /// </summary>
+        /// <param name="sql">SQL string.</param>
+        protected virtual async Task ExecuteSqlRawAsync(string sql)
+        {
+            await _dbContext.Database.ExecuteSqlRawAsync(sql);
         }
     }
 }

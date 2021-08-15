@@ -37,9 +37,19 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
             _entities = entities;
         }
 
+        public async Task ExposedExecuteSqlRawAsync(string sql)
+        {
+            await base.ExecuteSqlRawAsync(sql);
+        }
+
         protected override IList<FakeEntity> GetData()
         {
             return _entities;
+        }
+
+        protected override Task ExecuteSqlRawAsync(string sql)
+        {
+            return Task.CompletedTask;
         }
     }
 }

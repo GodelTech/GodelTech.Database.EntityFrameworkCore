@@ -54,6 +54,65 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             {
                 new object[]
                 {
+                    true,
+                    new Collection<FakeEntity>(),
+                    new Collection<FakeEntity>
+                    {
+                        new FakeEntity
+                        {
+                            Id = 1,
+                            Name = "Test Name First"
+                        }
+                    },
+                    new Collection<FakeEntity>
+                    {
+                        new FakeEntity
+                        {
+                            Id = 1,
+                            Name = "Test Name First"
+                        }
+                    }
+                },
+                new object[]
+                {
+                    true,
+                    new Collection<FakeEntity>
+                    {
+                        new FakeEntity
+                        {
+                            Id = 1,
+                            Name = "Test Name First Old"
+                        }
+                    },
+                    new Collection<FakeEntity>
+                    {
+                        new FakeEntity
+                        {
+                            Id = 1,
+                            Name = "Test Name First New"
+                        },
+                        new FakeEntity
+                        {
+                            Id = 2,
+                            Name = "Test Name Second"
+                        }
+                    },
+                    new Collection<FakeEntity>
+                    {
+                        new FakeEntity
+                        {
+                            Id = 1,
+                            Name = "Test Name First New"
+                        },
+                        new FakeEntity
+                        {
+                            Id = 2,
+                            Name = "Test Name Second"
+                        }
+                    }
+                },
+                new object[]
+                {
                     false,
                     new Collection<FakeEntity>(),
                     new Collection<FakeEntity>
@@ -151,6 +210,29 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
                 _dbContext.FakeEntities.ToList(),
                 new FakeEntityEqualityComparer()
             );
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task ExecuteSqlRawAsync_Success(bool enableIdentityInsert)
+        {
+            // Arrange
+            var service = new FakeDataService(
+                _configurationBuilder,
+                _hostingEnvironment,
+                "Test FolderPath",
+                _dbContext,
+                enableIdentityInsert,
+                x => x.Id,
+                _logger
+            );
+
+            // Act
+            await service.ExposedExecuteSqlRawAsync("SELECT * FROM FakeEntity");
+
+            // Assert
+            Assert.NotNull(service);
         }
     }
 }
