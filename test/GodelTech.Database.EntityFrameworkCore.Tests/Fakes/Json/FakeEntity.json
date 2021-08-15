@@ -1,13 +1,16 @@
 ﻿{
   "Data": [
     {
-      "Id": 1
+      "Id": 1,
+      "Name": "Test Name First"
     },
     {
-      "Id": 2
+      "Id": 2,
+      "Name": "Test Name Second"
     },
     {
-      "Id": 3
+      "Id": 3,
+      "Name": "Test Name Third"
     }
   ]
 }

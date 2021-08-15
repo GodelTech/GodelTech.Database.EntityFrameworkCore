@@ -59,14 +59,53 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
                     {
                         new FakeEntity
                         {
-                            Id = 1
+                            Id = 1,
+                            Name = "Test Name First"
                         }
                     },
                     new Collection<FakeEntity>
                     {
                         new FakeEntity
                         {
-                            Id = 1
+                            Id = 1,
+                            Name = "Test Name First"
+                        }
+                    }
+                },
+                new object[]
+                {
+                    new Collection<FakeEntity>
+                    {
+                        new FakeEntity
+                        {
+                            Id = 1,
+                            Name = "Test Name First Old"
+                        }
+                    },
+                    new Collection<FakeEntity>
+                    {
+                        new FakeEntity
+                        {
+                            Id = 1,
+                            Name = "Test Name First New"
+                        },
+                        new FakeEntity
+                        {
+                            Id = 2,
+                            Name = "Test Name Second"
+                        }
+                    },
+                    new Collection<FakeEntity>
+                    {
+                        new FakeEntity
+                        {
+                            Id = 1,
+                            Name = "Test Name First New"
+                        },
+                        new FakeEntity
+                        {
+                            Id = 2,
+                            Name = "Test Name Second"
                         }
                     }
                 }
@@ -83,6 +122,10 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             _dbContext
                 .FakeEntities
                 .AddRange(existingEntities);
+
+            await _dbContext.SaveChangesAsync();
+
+            _dbContext.ChangeTracker.Clear();
 
             var service = new FakeDataService(
                 _configurationBuilder,

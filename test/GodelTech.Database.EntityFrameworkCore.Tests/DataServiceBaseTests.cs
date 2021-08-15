@@ -47,15 +47,18 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
             {
                 new FakeEntity
                 {
-                    Id = 1
+                    Id = 1,
+                    Name = "Test Name First"
                 },
                 new FakeEntity
                 {
-                    Id = 2
+                    Id = 2,
+                    Name = "Test Name Second"
                 },
                 new FakeEntity
                 {
-                    Id = 3
+                    Id = 3,
+                    Name = "Test Name Third"
                 }
             };
 

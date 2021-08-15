@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
@@ -14,7 +15,8 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
             if (ReferenceEquals(x, null) || ReferenceEquals(y, null)) return false;
 
             // Check whether the objects' properties are equal.
-            return x.Id.Equals(y.Id);
+            return x.Id.Equals(y.Id)
+                   && x.Name == y.Name;
         }
 
         public int GetHashCode([DisallowNull] FakeEntity obj)
@@ -23,7 +25,8 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
             if (ReferenceEquals(obj, null)) return 0;
 
             // Calculate the hash code for the object.
-            return obj.Id.GetHashCode();
+            return obj.Id.GetHashCode()
+                   ^ obj.Name.GetHashCode(StringComparison.InvariantCulture);
         }
     }
 }
