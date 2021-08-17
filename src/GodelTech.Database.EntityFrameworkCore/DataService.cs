@@ -83,7 +83,7 @@ namespace GodelTech.Database.EntityFrameworkCore
 
             if (_enableIdentityInsert)
             {
-                _dbContext.Database.OpenConnection(); ;
+                _dbContext.Database.OpenConnection();
 
                 try
                 {
