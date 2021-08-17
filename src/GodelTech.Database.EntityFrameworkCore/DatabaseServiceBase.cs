@@ -12,7 +12,7 @@ namespace GodelTech.Database.EntityFrameworkCore
     /// <summary>
     /// Base class for DatabaseService.
     /// </summary>
-    public class DatabaseServiceBase
+    public abstract class DatabaseServiceBase
     {
         private readonly ILogger _logger;
         private readonly IList<DbContext> _dbContexts;
@@ -23,7 +23,9 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// </summary>
         /// <param name="logger">Logger.</param>
         /// <param name="dbContexts">Database contexts.</param>
-        protected DatabaseServiceBase(ILogger logger, params DbContext[] dbContexts)
+        protected DatabaseServiceBase(
+            ILogger logger,
+            params DbContext[] dbContexts)
         {
             _logger = logger;
             _dbContexts = new List<DbContext>(dbContexts);
@@ -59,10 +61,10 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// </summary>
         public async Task ApplyDataAsync()
         {
-            foreach (var dataService in _dataServices)
+            foreach (var keyValuePair in _dataServices)
             {
-                _logger.LogInformation("Apply data: {dataService}", dataService.Value.GetType().FullName);
-                await dataService.Value.ApplyDataAsync();
+                _logger.LogInformation("Apply data: {dataService}", keyValuePair.Value.GetType().FullName);
+                await keyValuePair.Value.ApplyDataAsync();
             }
         }
 
@@ -72,6 +74,8 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <param name="dataService">The data service.</param>
         protected void RegisterDataService(IDataService dataService)
         {
+            if (dataService == null) throw new ArgumentNullException(nameof(dataService));
+
             _dataServices[dataService.GetType()] = dataService;
         }
     }
