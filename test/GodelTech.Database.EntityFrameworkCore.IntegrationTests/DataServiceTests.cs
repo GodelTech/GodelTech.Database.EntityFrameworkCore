@@ -174,7 +174,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
 
         [Theory]
         [MemberData(nameof(ApplyDataMemberData))]
-        public async Task ApplyDataAsync_WithEnabledIdentityInsert_Success(
+        public async Task ApplyDataAsync_Success(
             bool enableIdentityInsert,
             Collection<FakeEntity> existingEntities,
             Collection<FakeEntity> entities,
