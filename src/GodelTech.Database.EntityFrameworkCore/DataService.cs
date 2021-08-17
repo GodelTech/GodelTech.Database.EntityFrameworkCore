@@ -83,7 +83,24 @@ namespace GodelTech.Database.EntityFrameworkCore
 
             if (_enableIdentityInsert)
             {
-                await SaveChangesWithIdentityInsertAsync();
+                _dbContext.Database.OpenConnection(); ;
+
+                try
+                {
+                    var entityType = _dbContext.Model.FindEntityType(typeof(TEntity));
+                    var schema = entityType.GetSchema();
+                    var tableName = entityType.GetTableName();
+
+                    await ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] ON;");
+                    await _dbContext.SaveChangesAsync();
+                    await ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;");
+
+                    Logger.LogInformation("Changes saved successfully");
+                }
+                finally
+                {
+                    _dbContext.Database.CloseConnection();
+                }
             }
             else
             {
@@ -100,28 +117,6 @@ namespace GodelTech.Database.EntityFrameworkCore
         protected virtual async Task ExecuteSqlRawAsync(string sql)
         {
             await _dbContext.Database.ExecuteSqlRawAsync(sql);
-        }
-
-        private async Task SaveChangesWithIdentityInsertAsync()
-        {
-            await _dbContext.Database.OpenConnectionAsync(); ;
-
-            try
-            {
-                var entityType = _dbContext.Model.FindEntityType(typeof(TEntity));
-                var schema = entityType.GetSchema();
-                var tableName = entityType.GetTableName();
-
-                await ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] ON;");
-                await _dbContext.SaveChangesAsync();
-                await ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;");
-
-                Logger.LogInformation("Changes saved successfully");
-            }
-            finally
-            {
-                await _dbContext.Database.CloseConnectionAsync();
-            }
         }
     }
 }
