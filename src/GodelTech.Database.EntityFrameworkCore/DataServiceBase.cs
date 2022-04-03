@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -48,13 +49,35 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// </summary>
         public abstract Task ApplyDataAsync();
 
+        private readonly Action<ILogger, string, Exception> _logGetDataGetConfigurationInformationCallback =
+            LoggerMessage.Define<string>(
+                LogLevel.Information,
+                new EventId(0, nameof(GetData)),
+                "Get configuration: {Entity}"
+            );
+
+        private readonly Action<ILogger, string, Exception> _logGetDataGetDataInformationCallback =
+            LoggerMessage.Define<string>(
+                LogLevel.Information,
+                new EventId(0, nameof(GetData)),
+                "Get data: {Entity}"
+            );
+
         /// <summary>
         /// Get data.
         /// </summary>
         /// <returns><cref>IList{TEntity}</cref>.</returns>
         protected virtual IList<TEntity> GetData()
         {
-            Logger.LogInformation("Get configuration: {entity}", typeof(TEntity).Name);
+            if (Logger.IsEnabled(LogLevel.Information))
+            {
+                _logGetDataGetConfigurationInformationCallback(
+                    Logger,
+                    typeof(TEntity).Name,
+                    null
+                );
+            }
+
             var configuration = BuildConfiguration(
                 _configurationBuilder,
                 _hostEnvironment,
@@ -62,7 +85,15 @@ namespace GodelTech.Database.EntityFrameworkCore
                 typeof(TEntity).Name
             );
 
-            Logger.LogInformation("Get data: {entity}", typeof(TEntity).Name);
+            if (Logger.IsEnabled(LogLevel.Information))
+            {
+                _logGetDataGetDataInformationCallback(
+                    Logger,
+                    typeof(TEntity).Name,
+                    null
+                );
+            }
+
             return configuration
                 .GetSection("Data")
                 .Get<IList<TEntity>>();
