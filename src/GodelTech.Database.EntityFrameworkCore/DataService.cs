@@ -50,6 +50,41 @@ namespace GodelTech.Database.EntityFrameworkCore
             _enableIdentityInsert = enableIdentityInsert;
         }
 
+        private readonly Action<ILogger, string, Exception> _logApplyDataAsyncEmptyDataWarningCallback =
+            LoggerMessage.Define<string>(
+                LogLevel.Warning,
+                new EventId(0, nameof(ApplyDataAsync)),
+                "Empty data: {Entity}"
+            );
+
+        private static readonly Action<ILogger, TType, Exception> LogApplyDataAsyncUpdateEntityInformationCallback =
+            LoggerMessage.Define<TType>(
+                LogLevel.Information,
+                new EventId(0, nameof(ApplyDataAsync)),
+                "Update entity: {Property}"
+            );
+
+        private static readonly Action<ILogger, TType, Exception> LogApplyDataAsyncAddEntityInformationCallback =
+            LoggerMessage.Define<TType>(
+                LogLevel.Information,
+                new EventId(0, nameof(ApplyDataAsync)),
+                "Add entity: {Property}"
+            );
+
+        private readonly Action<ILogger, Exception> _logApplyDataAsyncSavingChangesInformationCallback =
+            LoggerMessage.Define(
+                LogLevel.Information,
+                new EventId(0, nameof(ApplyDataAsync)),
+                "Saving changes..."
+            );
+
+        private readonly Action<ILogger, Exception> _logApplyDataAsyncChangesSavedInformationCallback =
+            LoggerMessage.Define(
+                LogLevel.Information,
+                new EventId(0, nameof(ApplyDataAsync)),
+                "Changes saved successfully"
+            );
+
         /// <summary>
         /// Apply data.
         /// </summary>
@@ -59,7 +94,12 @@ namespace GodelTech.Database.EntityFrameworkCore
 
             if (entities == null || !entities.Any())
             {
-                Logger.LogWarning("Empty data: {entity}", typeof(TEntity).Name);
+                _logApplyDataAsyncEmptyDataWarningCallback(
+                    Logger,
+                    typeof(TEntity).Name,
+                    null
+                );
+
                 return;
             }
 
@@ -69,17 +109,30 @@ namespace GodelTech.Database.EntityFrameworkCore
 
                 if (_dbContext.Set<TEntity>().AsNoTracking().Any(predicate.Compile()))
                 {
-                    Logger.LogInformation("Update entity: {property}", _propertyToCompare(entity));
+                    LogApplyDataAsyncUpdateEntityInformationCallback(
+                        Logger,
+                        _propertyToCompare(entity),
+                        null
+                    );
+
                     _dbContext.Set<TEntity>().Update(entity);
                 }
                 else
                 {
-                    Logger.LogInformation("Add entity: {property}", _propertyToCompare(entity));
+                    LogApplyDataAsyncAddEntityInformationCallback(
+                        Logger,
+                        _propertyToCompare(entity),
+                        null
+                    );
+
                     await _dbContext.Set<TEntity>().AddAsync(entity);
                 }
             }
 
-            Logger.LogInformation("Saving changes...");
+            _logApplyDataAsyncSavingChangesInformationCallback(
+                Logger,
+                null
+            );
 
             if (_enableIdentityInsert)
             {
@@ -91,13 +144,19 @@ namespace GodelTech.Database.EntityFrameworkCore
                 await _dbContext.SaveChangesAsync();
                 await ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;");
 
-                Logger.LogInformation("Changes saved successfully");
+                _logApplyDataAsyncChangesSavedInformationCallback(
+                    Logger,
+                    null
+                );
             }
             else
             {
                 await _dbContext.SaveChangesAsync();
 
-                Logger.LogInformation("Changes saved successfully");
+                _logApplyDataAsyncChangesSavedInformationCallback(
+                    Logger,
+                    null
+                );
             }
         }
 

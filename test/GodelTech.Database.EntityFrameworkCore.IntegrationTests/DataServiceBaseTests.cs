@@ -3,7 +3,6 @@ using System.IO;
 using GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting.Internal;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
@@ -25,8 +24,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
                 EnvironmentName = "Development"
             };
 
-            using var loggerFactory = new NullLoggerFactory();
-            var logger = new Logger<DataServiceBaseTests>(loggerFactory);
+            var logger = new NullLogger<DatabaseServiceBaseTests>();
 
             _service = new FakeDataServiceBase(
                 configurationBuilder,

@@ -39,8 +39,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             _dbContext.Database.OpenConnection();
             _dbContext.Database.EnsureCreated();
 
-            using var loggerFactory = new NullLoggerFactory();
-            _logger = new Logger<DataServiceTests>(loggerFactory);
+            _logger = new NullLogger<DatabaseServiceBaseTests>();
         }
 
         public void Dispose()
@@ -52,6 +51,20 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
         public static IEnumerable<object[]> ApplyDataMemberData =>
             new Collection<object[]>
             {
+                new object[]
+                {
+                    true,
+                    new Collection<FakeEntity>(),
+                    null,
+                    new Collection<FakeEntity>()
+                },
+                new object[]
+                {
+                    true,
+                    new Collection<FakeEntity>(),
+                    new Collection<FakeEntity>(),
+                    new Collection<FakeEntity>()
+                },
                 new object[]
                 {
                     true,

@@ -58,6 +58,10 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
 
             service.SetData(entities);
 
+            _mockLogger
+                .Setup(x => x.IsEnabled(LogLevel.Warning))
+                .Returns(true);
+
             Expression<Action<ILogger>> loggerExpression = x => x.Log(
                 LogLevel.Warning,
                 0,

@@ -32,6 +32,13 @@ namespace GodelTech.Database.EntityFrameworkCore
             _dataServices = new Dictionary<Type, IDataService>();
         }
 
+        private static readonly Action<ILogger, string, Exception> LogApplyMigrationsAsyncInformationCallback =
+            LoggerMessage.Define<string>(
+                LogLevel.Information,
+                new EventId(0, nameof(ApplyMigrationsAsync)),
+                "Apply migrations: {DbContext}"
+            );
+
         /// <summary>
         /// Apply migrations for provided contexts.
         /// </summary>
@@ -39,10 +46,22 @@ namespace GodelTech.Database.EntityFrameworkCore
         {
             foreach (var dbContext in _dbContexts)
             {
-                _logger.LogInformation("Apply migrations: {dbContext}", dbContext.GetType().FullName);
+                LogApplyMigrationsAsyncInformationCallback(
+                    _logger,
+                    dbContext.GetType().FullName,
+                    null
+                );
+
                 await dbContext.Database.MigrateAsync();
             }
         }
+
+        private static readonly Action<ILogger, string, Exception> LogDeleteMigrationsAsyncInformationCallback =
+            LoggerMessage.Define<string>(
+                LogLevel.Information,
+                new EventId(0, nameof(DeleteMigrationsAsync)),
+                "Delete migrations: {DbContext}"
+            );
 
         /// <summary>
         /// Delete migrations for provided contexts.
@@ -51,20 +70,37 @@ namespace GodelTech.Database.EntityFrameworkCore
         {
             foreach (var dbContext in _dbContexts.Reverse())
             {
-                _logger.LogInformation("Delete migrations: {dbContext}", dbContext.GetType().FullName);
+                LogDeleteMigrationsAsyncInformationCallback(
+                    _logger,
+                    dbContext.GetType().FullName,
+                    null
+                );
+
                 await dbContext.GetService<IMigrator>().MigrateAsync("0");
             }
         }
+
+        private static readonly Action<ILogger, string, Exception> LogApplyDataAsyncInformationCallback =
+            LoggerMessage.Define<string>(
+                LogLevel.Information,
+                new EventId(0, nameof(ApplyDataAsync)),
+                "Apply data: {DataService}"
+            );
 
         /// <summary>
         /// Apply data using data services.
         /// </summary>
         public async Task ApplyDataAsync()
         {
-            foreach (var keyValuePair in _dataServices)
+            foreach (var dataService in _dataServices.Select(x => x.Value))
             {
-                _logger.LogInformation("Apply data: {dataService}", keyValuePair.Value.GetType().FullName);
-                await keyValuePair.Value.ApplyDataAsync();
+                LogApplyDataAsyncInformationCallback(
+                    _logger,
+                    dataService.GetType().FullName,
+                    null
+                );
+
+                await dataService.ApplyDataAsync();
             }
         }
 

@@ -62,6 +62,10 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
                 }
             };
 
+            _mockLogger
+                .Setup(x => x.IsEnabled(LogLevel.Information))
+                .Returns(true);
+
             Expression<Action<ILogger>> loggerExpressionConfiguration = x => x.Log(
                 LogLevel.Information,
                 0,
