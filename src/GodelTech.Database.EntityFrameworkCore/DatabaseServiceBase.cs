@@ -98,18 +98,18 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// </summary>
         public async Task ApplyDataAsync()
         {
-            foreach (var keyValuePair in _dataServices)
+            foreach (var dataService in _dataServices.Select(x => x.Value))
             {
                 if (_logger.IsEnabled(LogLevel.Information))
                 {
                     LogApplyDataAsyncInformationCallback(
                         _logger,
-                        keyValuePair.Value.GetType().FullName,
+                        dataService.GetType().FullName,
                         null
                     );
                 }
 
-                await keyValuePair.Value.ApplyDataAsync();
+                await dataService.ApplyDataAsync();
             }
         }
 
