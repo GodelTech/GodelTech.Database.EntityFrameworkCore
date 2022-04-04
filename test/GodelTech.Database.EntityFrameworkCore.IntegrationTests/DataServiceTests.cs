@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
@@ -38,7 +39,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             _dbContext.Database.OpenConnection();
             _dbContext.Database.EnsureCreated();
 
-            _logger = new FakeLogger<DatabaseServiceBaseTests>();
+            _logger = new NullLogger<DatabaseServiceBaseTests>();
         }
 
         public void Dispose()

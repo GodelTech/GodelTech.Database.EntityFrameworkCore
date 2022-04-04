@@ -46,14 +46,11 @@ namespace GodelTech.Database.EntityFrameworkCore
         {
             foreach (var dbContext in _dbContexts)
             {
-                if (_logger.IsEnabled(LogLevel.Information))
-                {
-                    LogApplyMigrationsAsyncInformationCallback(
-                        _logger,
-                        dbContext.GetType().FullName,
-                        null
-                    );
-                }
+                LogApplyMigrationsAsyncInformationCallback(
+                    _logger,
+                    dbContext.GetType().FullName,
+                    null
+                );
 
                 await dbContext.Database.MigrateAsync();
             }
@@ -73,14 +70,11 @@ namespace GodelTech.Database.EntityFrameworkCore
         {
             foreach (var dbContext in _dbContexts.Reverse())
             {
-                if (_logger.IsEnabled(LogLevel.Information))
-                {
-                    LogDeleteMigrationsAsyncInformationCallback(
-                        _logger,
-                        dbContext.GetType().FullName,
-                        null
-                    );
-                }
+                LogDeleteMigrationsAsyncInformationCallback(
+                    _logger,
+                    dbContext.GetType().FullName,
+                    null
+                );
 
                 await dbContext.GetService<IMigrator>().MigrateAsync("0");
             }
@@ -100,14 +94,11 @@ namespace GodelTech.Database.EntityFrameworkCore
         {
             foreach (var dataService in _dataServices.Select(x => x.Value))
             {
-                if (_logger.IsEnabled(LogLevel.Information))
-                {
-                    LogApplyDataAsyncInformationCallback(
-                        _logger,
-                        dataService.GetType().FullName,
-                        null
-                    );
-                }
+                LogApplyDataAsyncInformationCallback(
+                    _logger,
+                    dataService.GetType().FullName,
+                    null
+                );
 
                 await dataService.ApplyDataAsync();
             }

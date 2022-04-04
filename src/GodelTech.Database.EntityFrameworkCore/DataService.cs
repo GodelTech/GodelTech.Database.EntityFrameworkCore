@@ -94,14 +94,11 @@ namespace GodelTech.Database.EntityFrameworkCore
 
             if (entities == null || !entities.Any())
             {
-                if (Logger.IsEnabled(LogLevel.Warning))
-                {
-                    _logApplyDataAsyncEmptyDataWarningCallback(
-                        Logger,
-                        typeof(TEntity).Name,
-                        null
-                    );
-                }
+                _logApplyDataAsyncEmptyDataWarningCallback(
+                    Logger,
+                    typeof(TEntity).Name,
+                    null
+                );
 
                 return;
             }
@@ -112,39 +109,30 @@ namespace GodelTech.Database.EntityFrameworkCore
 
                 if (_dbContext.Set<TEntity>().AsNoTracking().Any(predicate.Compile()))
                 {
-                    if (Logger.IsEnabled(LogLevel.Information))
-                    {
-                        LogApplyDataAsyncUpdateEntityInformationCallback(
-                            Logger,
-                            _propertyToCompare(entity),
-                            null
-                        );
-                    }
+                    LogApplyDataAsyncUpdateEntityInformationCallback(
+                        Logger,
+                        _propertyToCompare(entity),
+                        null
+                    );
 
                     _dbContext.Set<TEntity>().Update(entity);
                 }
                 else
                 {
-                    if (Logger.IsEnabled(LogLevel.Information))
-                    {
-                        LogApplyDataAsyncAddEntityInformationCallback(
-                            Logger,
-                            _propertyToCompare(entity),
-                            null
-                        );
-                    }
+                    LogApplyDataAsyncAddEntityInformationCallback(
+                        Logger,
+                        _propertyToCompare(entity),
+                        null
+                    );
 
                     await _dbContext.Set<TEntity>().AddAsync(entity);
                 }
             }
 
-            if (Logger.IsEnabled(LogLevel.Information))
-            {
-                _logApplyDataAsyncSavingChangesInformationCallback(
-                    Logger,
-                    null
-                );
-            }
+            _logApplyDataAsyncSavingChangesInformationCallback(
+                Logger,
+                null
+            );
 
             if (_enableIdentityInsert)
             {
@@ -156,25 +144,19 @@ namespace GodelTech.Database.EntityFrameworkCore
                 await _dbContext.SaveChangesAsync();
                 await ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;");
 
-                if (Logger.IsEnabled(LogLevel.Information))
-                {
-                    _logApplyDataAsyncChangesSavedInformationCallback(
-                        Logger,
-                        null
-                    );
-                }
+                _logApplyDataAsyncChangesSavedInformationCallback(
+                    Logger,
+                    null
+                );
             }
             else
             {
                 await _dbContext.SaveChangesAsync();
 
-                if (Logger.IsEnabled(LogLevel.Information))
-                {
-                    _logApplyDataAsyncChangesSavedInformationCallback(
-                        Logger,
-                        null
-                    );
-                }
+                _logApplyDataAsyncChangesSavedInformationCallback(
+                    Logger,
+                    null
+                );
             }
         }
 

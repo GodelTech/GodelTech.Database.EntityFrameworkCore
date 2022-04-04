@@ -69,14 +69,11 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <returns><cref>IList{TEntity}</cref>.</returns>
         protected virtual IList<TEntity> GetData()
         {
-            if (Logger.IsEnabled(LogLevel.Information))
-            {
-                _logGetDataGetConfigurationInformationCallback(
-                    Logger,
-                    typeof(TEntity).Name,
-                    null
-                );
-            }
+            _logGetDataGetConfigurationInformationCallback(
+                Logger,
+                typeof(TEntity).Name,
+                null
+            );
 
             var configuration = BuildConfiguration(
                 _configurationBuilder,
@@ -85,14 +82,11 @@ namespace GodelTech.Database.EntityFrameworkCore
                 typeof(TEntity).Name
             );
 
-            if (Logger.IsEnabled(LogLevel.Information))
-            {
-                _logGetDataGetDataInformationCallback(
-                    Logger,
-                    typeof(TEntity).Name,
-                    null
-                );
-            }
+            _logGetDataGetDataInformationCallback(
+                Logger,
+                typeof(TEntity).Name,
+                null
+            );
 
             return configuration
                 .GetSection("Data")

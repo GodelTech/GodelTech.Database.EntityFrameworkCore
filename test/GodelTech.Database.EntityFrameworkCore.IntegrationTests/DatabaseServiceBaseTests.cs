@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
@@ -11,7 +12,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
 
         public DatabaseServiceBaseTests()
         {
-            var logger = new FakeLogger<DatabaseServiceBaseTests>();
+            var logger = new NullLogger<DatabaseServiceBaseTests>();
 
             var dbContextOptions = new DbContextOptionsBuilder<FakeDbContext>()
                 .UseSqlite("DataSource=:memory:")
