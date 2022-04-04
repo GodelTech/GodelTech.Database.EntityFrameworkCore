@@ -12,18 +12,17 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
     public class DatabaseServiceBaseTests
     {
         private readonly Mock<ILogger> _mockLogger;
-        private readonly Mock<DbContext> _mockDbContext;
 
         private readonly FakeDatabaseServiceBase _service;
 
         public DatabaseServiceBaseTests()
         {
             _mockLogger = new Mock<ILogger>(MockBehavior.Strict);
-            _mockDbContext = new Mock<DbContext>(MockBehavior.Strict);
+            var mockDbContext = new Mock<DbContext>(MockBehavior.Strict);
 
             _service = new FakeDatabaseServiceBase(
                 _mockLogger.Object,
-                _mockDbContext.Object
+                mockDbContext.Object
             );
         }
 
@@ -34,6 +33,10 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
             var mockDataService = new Mock<IDataService>();
 
             _service.ExposedRegisterDataService(mockDataService.Object);
+
+            _mockLogger
+                .Setup(x => x.IsEnabled(LogLevel.Information))
+                .Returns(true);
 
             Expression<Action<ILogger>> loggerExpression = x => x.Log(
                 LogLevel.Information,
