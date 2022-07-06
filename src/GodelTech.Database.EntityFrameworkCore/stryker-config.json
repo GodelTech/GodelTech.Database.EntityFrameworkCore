@@ -1,0 +1,8 @@
+{
+  "stryker-config": {
+    "test-projects": [
+      "../../test/GodelTech.Database.EntityFrameworkCore.IntegrationTests/GodelTech.Database.EntityFrameworkCore.IntegrationTests.csproj",
+      "../../test/GodelTech.Database.EntityFrameworkCore.Tests/GodelTech.Database.EntityFrameworkCore.Tests.csproj"
+    ]
+  }
+}
