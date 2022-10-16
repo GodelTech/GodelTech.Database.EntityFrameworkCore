@@ -1,47 +1,47 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
-		<PackageId>GodelTech.Database.EntityFrameworkCore</PackageId>
-		<VersionPrefix>1.1.1</VersionPrefix>
-		<Authors>v.rodchenko</Authors>
-		<Company>Godel Technologies</Company>
-		<Description>Library to work with database, apply migrations and data using Entity Framework Core</Description>
-		<Copyright>Godel Technologies 2020</Copyright>
-		<PackageLicenseUrl>https://github.com/GodelTech/GodelTech.Database.EntityFrameworkCore/blob/master/LICENSE</PackageLicenseUrl>
-		<PackageProjectUrl>https://github.com/GodelTech/GodelTech.Database.EntityFrameworkCore/wiki</PackageProjectUrl>
-		<PackageIconUrl>https://www.gravatar.com/avatar/839234621070de51e7b9cabd5ceee8fe?s=64</PackageIconUrl>
-		<RepositoryUrl>https://github.com/GodelTech/GodelTech.Database.EntityFrameworkCore</RepositoryUrl>
-		<PackageTags>Database Entity Framework Core</PackageTags>
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
+    <PackageId>GodelTech.Database.EntityFrameworkCore</PackageId>
+    <VersionPrefix>1.1.1</VersionPrefix>
+    <Authors>v.rodchenko</Authors>
+    <Company>Godel Technologies</Company>
+    <Description>Library to work with database, apply migrations and data using Entity Framework Core</Description>
+    <Copyright>Godel Technologies 2020</Copyright>
+    <PackageLicenseUrl>https://github.com/GodelTech/GodelTech.Database.EntityFrameworkCore/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/GodelTech/GodelTech.Database.EntityFrameworkCore/wiki</PackageProjectUrl>
+    <PackageIconUrl>https://www.gravatar.com/avatar/839234621070de51e7b9cabd5ceee8fe?s=64</PackageIconUrl>
+    <RepositoryUrl>https://github.com/GodelTech/GodelTech.Database.EntityFrameworkCore</RepositoryUrl>
+    <PackageTags>Database Entity Framework Core</PackageTags>
 
-		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
 
-		<!-- XML documentation -->
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- XML documentation -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-		<!-- Source Link needs this -->
-		<PublishRepositoryUrl>true</PublishRepositoryUrl>
-		<EmbedUntrackedSources>true</EmbedUntrackedSources>
-		<IncludeSymbols>true</IncludeSymbols>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <!-- Source Link needs this -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
-		<!-- SonarQube needs this -->
-		<ProjectGuid>{00000000-0000-0000-0000-000000000010}</ProjectGuid>
-	</PropertyGroup>
+    <!-- SonarQube needs this -->
+    <ProjectGuid>{00000000-0000-0000-0000-000000000010}</ProjectGuid>
+  </PropertyGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.17" />
-	</ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.17" />
+  </ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.7" />
-	</ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.7" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
 
-		<!-- Source Link needs this -->
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
-	</ItemGroup>
+    <!-- Source Link needs this -->
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+  </ItemGroup>
 
 </Project>
