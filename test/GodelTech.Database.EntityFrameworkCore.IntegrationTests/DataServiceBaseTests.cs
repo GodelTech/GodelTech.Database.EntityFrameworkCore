@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using FluentAssertions;
 using GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting.Internal;
@@ -61,7 +62,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             var result = _service.ExposedGetData();
 
             // Assert
-            Assert.Equal(expectedResult, result, new FakeEntityEqualityComparer());
+            result.Should().BeEquivalentTo(expectedResult);
         }
     }
 }

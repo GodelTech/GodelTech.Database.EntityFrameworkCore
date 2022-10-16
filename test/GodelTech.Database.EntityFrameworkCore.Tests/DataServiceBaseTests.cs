@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq.Expressions;
+using FluentAssertions;
 using GodelTech.Database.EntityFrameworkCore.Tests.Fakes;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
@@ -206,7 +207,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
 
             _mockLogger.Verify(loggerExpressionData, Times.Once);
 
-            Assert.Equal(expectedResult, result, new FakeEntityEqualityComparer());
+            result.Should().BeEquivalentTo(expectedResult);
         }
     }
 }
