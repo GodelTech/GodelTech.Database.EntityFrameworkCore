@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -218,11 +219,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             await service.ApplyDataAsync();
 
             // Assert
-            Assert.Equal(
-                expectedEntities,
-                _dbContext.FakeEntities.ToList(),
-                new FakeEntityEqualityComparer()
-            );
+            _dbContext.FakeEntities.ToList().Should().BeEquivalentTo(expectedEntities);
         }
 
         [Theory]
