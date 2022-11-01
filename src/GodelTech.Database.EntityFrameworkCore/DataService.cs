@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -85,10 +86,9 @@ namespace GodelTech.Database.EntityFrameworkCore
                 "Changes saved successfully"
             );
 
-        /// <summary>
-        /// Apply data.
-        /// </summary>
-        public override async Task ApplyDataAsync()
+
+        /// <inheritdoc />
+        public override async Task ApplyDataAsync(CancellationToken cancellationToken = default)
         {
             var entities = GetData();
 
@@ -125,7 +125,7 @@ namespace GodelTech.Database.EntityFrameworkCore
                         null
                     );
 
-                    await _dbContext.Set<TEntity>().AddAsync(entity);
+                    await _dbContext.Set<TEntity>().AddAsync(entity, cancellationToken);
                 }
             }
 
@@ -140,12 +140,12 @@ namespace GodelTech.Database.EntityFrameworkCore
                 var schema = entityType.GetSchema();
                 var tableName = entityType.GetTableName();
 
-                await _dbContext.Database.OpenConnectionAsync();
+                await _dbContext.Database.OpenConnectionAsync(cancellationToken);
                 try
                 {
-                    await ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] ON;");
-                    await _dbContext.SaveChangesAsync();
-                    await ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;");
+                    await ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] ON;", cancellationToken);
+                    await _dbContext.SaveChangesAsync(cancellationToken);
+                    await ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;", cancellationToken);
                 }
                 finally
                 {
@@ -159,7 +159,7 @@ namespace GodelTech.Database.EntityFrameworkCore
             }
             else
             {
-                await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync(cancellationToken);
 
                 _logApplyDataAsyncChangesSavedInformationCallback(
                     Logger,
@@ -172,9 +172,10 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// Executes SQL.
         /// </summary>
         /// <param name="sql">SQL string.</param>
-        protected virtual async Task ExecuteSqlRawAsync(string sql)
+        /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+        protected virtual async Task ExecuteSqlRawAsync(string sql, CancellationToken cancellationToken)
         {
-            await _dbContext.Database.ExecuteSqlRawAsync(sql);
+            await _dbContext.Database.ExecuteSqlRawAsync(sql, cancellationToken);
         }
     }
 }

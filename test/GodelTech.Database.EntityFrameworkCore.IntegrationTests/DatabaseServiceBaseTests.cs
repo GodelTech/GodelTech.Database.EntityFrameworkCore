@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -26,8 +27,11 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
         [Fact]
         public async Task ApplyMigrationsAsync_Success()
         {
-            // Arrange & Act
-            await _service.ApplyMigrationsAsync();
+            // Arrange
+            var cancellationToken = new CancellationToken();
+
+            // Act
+            await _service.ApplyMigrationsAsync(cancellationToken);
 
             // Assert
             Assert.NotNull(_service);
@@ -36,8 +40,11 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
         [Fact]
         public async Task DeleteMigrationsAsync_Success()
         {
-            // Arrange & Act
-            await _service.DeleteMigrationsAsync();
+            // Arrange
+            var cancellationToken = new CancellationToken();
+
+            // Act
+            await _service.DeleteMigrationsAsync(cancellationToken);
 
             // Assert
             Assert.NotNull(_service);

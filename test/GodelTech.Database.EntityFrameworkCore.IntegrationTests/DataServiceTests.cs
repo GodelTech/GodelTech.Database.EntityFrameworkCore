@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes;
@@ -195,11 +196,13 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             Collection<FakeEntity> expectedEntities)
         {
             // Arrange
+            var cancellationToken = new CancellationToken();
+
             _dbContext
                 .FakeEntities
                 .AddRange(existingEntities);
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             _dbContext.ChangeTracker.Clear();
 
@@ -216,7 +219,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             service.SetData(entities);
 
             // Act
-            await service.ApplyDataAsync();
+            await service.ApplyDataAsync(cancellationToken);
 
             // Assert
             _dbContext.FakeEntities.ToList().Should().BeEquivalentTo(expectedEntities);
@@ -228,6 +231,8 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
         public async Task ExecuteSqlRawAsync_Success(bool enableIdentityInsert)
         {
             // Arrange
+            var cancellationToken = new CancellationToken();
+
             var service = new FakeDataService(
                 _configurationBuilder,
                 _hostingEnvironment,
@@ -239,7 +244,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             );
 
             // Act
-            await service.ExposedExecuteSqlRawAsync("SELECT * FROM FakeEntity");
+            await service.ExposedExecuteSqlRawAsync("SELECT * FROM FakeEntity", cancellationToken);
 
             // Assert
             Assert.NotNull(service);
