@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using GodelTech.Database.EntityFrameworkCore.Tests.Fakes;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,8 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
             IList<FakeEntity> entities)
         {
             // Arrange
+            var cancellationToken = new CancellationToken();
+
             var service = new FakeDataService(
                 _mockConfigurationBuilder.Object,
                 _mockHostEnvironment.Object,
@@ -75,7 +78,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
             _mockLogger.Setup(loggerExpression);
 
             // Act
-            await service.ApplyDataAsync();
+            await service.ApplyDataAsync(cancellationToken);
 
             // Assert
             _mockLogger.Verify(loggerExpression, Times.Once);

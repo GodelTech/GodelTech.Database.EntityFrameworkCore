@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 [assembly: CLSCompliant(false)]
@@ -12,6 +13,7 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <summary>
         /// Apply data.
         /// </summary>
-        Task ApplyDataAsync();
+        /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+        Task ApplyDataAsync(CancellationToken cancellationToken = default);
     }
 }

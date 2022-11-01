@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -37,9 +38,9 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
             _entities = entities;
         }
 
-        public async Task ExposedExecuteSqlRawAsync(string sql)
+        public async Task ExposedExecuteSqlRawAsync(string sql, CancellationToken cancellationToken)
         {
-            await base.ExecuteSqlRawAsync(sql);
+            await base.ExecuteSqlRawAsync(sql, cancellationToken);
         }
 
         protected override IList<FakeEntity> GetData()
@@ -47,7 +48,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
             return _entities;
         }
 
-        protected override Task ExecuteSqlRawAsync(string sql)
+        protected override Task ExecuteSqlRawAsync(string sql, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }

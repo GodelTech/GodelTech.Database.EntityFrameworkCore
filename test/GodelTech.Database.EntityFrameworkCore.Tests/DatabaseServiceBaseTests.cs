@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using GodelTech.Database.EntityFrameworkCore.Tests.Fakes;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,8 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
         public async Task ApplyDataAsync_Success()
         {
             // Arrange
+            var cancellationToken = new CancellationToken();
+
             var mockDataService = new Mock<IDataService>();
 
             _service.ExposedRegisterDataService(mockDataService.Object);
@@ -51,17 +54,17 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
             _mockLogger.Setup(loggerExpression);
 
             mockDataService
-                .Setup(x => x.ApplyDataAsync());
+                .Setup(x => x.ApplyDataAsync(cancellationToken));
 
             // Act
-            await _service.ApplyDataAsync();
+            await _service.ApplyDataAsync(cancellationToken);
 
             // Assert
             _mockLogger.Verify(loggerExpression, Times.Once);
 
             mockDataService
                 .Verify(
-                    x => x.ApplyDataAsync(),
+                    x => x.ApplyDataAsync(cancellationToken),
                     Times.Once
                 );
         }

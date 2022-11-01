@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -42,7 +43,8 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <summary>
         /// Apply migrations for provided contexts.
         /// </summary>
-        public async Task ApplyMigrationsAsync()
+        /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+        public async Task ApplyMigrationsAsync(CancellationToken cancellationToken = default)
         {
             foreach (var dbContext in _dbContexts)
             {
@@ -52,7 +54,7 @@ namespace GodelTech.Database.EntityFrameworkCore
                     null
                 );
 
-                await dbContext.Database.MigrateAsync();
+                await dbContext.Database.MigrateAsync(cancellationToken);
             }
         }
 
@@ -66,7 +68,8 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <summary>
         /// Delete migrations for provided contexts.
         /// </summary>
-        public async Task DeleteMigrationsAsync()
+        /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+        public async Task DeleteMigrationsAsync(CancellationToken cancellationToken = default)
         {
             foreach (var dbContext in _dbContexts.Reverse())
             {
@@ -76,7 +79,7 @@ namespace GodelTech.Database.EntityFrameworkCore
                     null
                 );
 
-                await dbContext.GetService<IMigrator>().MigrateAsync("0");
+                await dbContext.GetService<IMigrator>().MigrateAsync("0", cancellationToken);
             }
         }
 
@@ -90,7 +93,8 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <summary>
         /// Apply data using data services.
         /// </summary>
-        public async Task ApplyDataAsync()
+        /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+        public async Task ApplyDataAsync(CancellationToken cancellationToken = default)
         {
             foreach (var dataService in _dataServices.Select(x => x.Value))
             {
@@ -100,7 +104,7 @@ namespace GodelTech.Database.EntityFrameworkCore
                     null
                 );
 
-                await dataService.ApplyDataAsync();
+                await dataService.ApplyDataAsync(cancellationToken);
             }
         }
 

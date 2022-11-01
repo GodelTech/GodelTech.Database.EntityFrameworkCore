@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -22,7 +23,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests.Fakes
 
         }
 
-        public override Task ApplyDataAsync()
+        public override Task ApplyDataAsync(CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;
         }

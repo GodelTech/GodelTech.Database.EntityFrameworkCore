@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -44,10 +45,8 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <value>The logger.</value>
         protected ILogger Logger { get; }
 
-        /// <summary>
-        /// Apply data.
-        /// </summary>
-        public abstract Task ApplyDataAsync();
+        /// <inheritdoc />
+        public abstract Task ApplyDataAsync(CancellationToken cancellationToken = default);
 
         private readonly Action<ILogger, string, Exception> _logGetDataGetConfigurationInformationCallback =
             LoggerMessage.Define<string>(
