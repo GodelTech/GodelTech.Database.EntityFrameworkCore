@@ -204,7 +204,18 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
+#if NETCOREAPP3_1
+            var notDetachedEntityEntries = _dbContext.ChangeTracker.Entries()
+                .Where(x => x.State != EntityState.Detached)
+                .ToList();
+
+            foreach (var entityEntry in notDetachedEntityEntries)
+            {
+                entityEntry.State = EntityState.Detached;
+            }
+#else
             _dbContext.ChangeTracker.Clear();
+#endif
 
             var service = new FakeDataService(
                 _configurationBuilder,
