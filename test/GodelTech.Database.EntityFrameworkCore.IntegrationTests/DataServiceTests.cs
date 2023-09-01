@@ -7,12 +7,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes;
+using GodelTech.XUnit.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
 {
@@ -23,7 +24,10 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
         private readonly FakeDbContext _dbContext;
         private readonly ILogger _logger;
 
-        public DataServiceTests()
+        private readonly ITestLoggerContextAccessor _testLoggerContextAccessor = new TestLoggerContextAccessor();
+        private readonly TestLoggerProvider _testLoggerProvider;
+
+        public DataServiceTests(ITestOutputHelper output)
         {
             _configurationBuilder = new ConfigurationBuilder();
 
@@ -41,13 +45,16 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             _dbContext.Database.OpenConnection();
             _dbContext.Database.EnsureCreated();
 
-            _logger = new NullLogger<DatabaseServiceBaseTests>();
+            _testLoggerProvider = new TestLoggerProvider(output, _testLoggerContextAccessor, true);
+            _logger = _testLoggerProvider.CreateLogger(nameof(DataServiceTests));
         }
 
         public void Dispose()
         {
             _dbContext.Database.CloseConnection();
             _dbContext.Dispose();
+
+            _testLoggerProvider.Dispose();
         }
 
         public static IEnumerable<object[]> ApplyDataMemberData =>
@@ -204,18 +211,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-#if NETCOREAPP3_1
-            var notDetachedEntityEntries = _dbContext.ChangeTracker.Entries()
-                .Where(x => x.State != EntityState.Detached)
-                .ToList();
-
-            foreach (var entityEntry in notDetachedEntityEntries)
-            {
-                entityEntry.State = EntityState.Detached;
-            }
-#else
             _dbContext.ChangeTracker.Clear();
-#endif
 
             var service = new FakeDataService(
                 _configurationBuilder,
