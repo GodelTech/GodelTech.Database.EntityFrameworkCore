@@ -33,7 +33,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
             // Arrange
             var cancellationToken = new CancellationToken();
 
-            var mockDataService = new Mock<IDataService>();
+            var mockDataService = new Mock<IDataService>(MockBehavior.Strict);
 
             _service.ExposedRegisterDataService(mockDataService.Object);
 
@@ -54,7 +54,8 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
             _mockLogger.Setup(loggerExpression);
 
             mockDataService
-                .Setup(x => x.ApplyDataAsync(cancellationToken));
+                .Setup(x => x.ApplyDataAsync(cancellationToken))
+                .Returns(Task.CompletedTask);
 
             // Act
             await _service.ApplyDataAsync(cancellationToken);
@@ -83,7 +84,7 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
         public void RegisterDataService_Success()
         {
             // Arrange
-            var mockDataService = new Mock<IDataService>();
+            var mockDataService = new Mock<IDataService>(MockBehavior.Strict);
 
             // Act
             _service.ExposedRegisterDataService(mockDataService.Object);

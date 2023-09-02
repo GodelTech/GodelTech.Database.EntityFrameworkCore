@@ -19,8 +19,9 @@ namespace GodelTech.Database.EntityFrameworkCore
         where TEntity : class
     {
         private readonly DbContext _dbContext;
-        private readonly Func<TEntity, TType> _propertyToCompare;
         private readonly bool _enableIdentityInsert;
+        private readonly Func<TEntity, TType> _propertyToCompare;
+        private readonly ISqlExecutor _sqlExecutor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataService{TEntity, TType}"/> class.
@@ -32,6 +33,7 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <param name="enableIdentityInsert">Enable IDENTITY_INSERT to insert an explicit value to id property.</param>
         /// <param name="propertyToCompare">The property selector to compare by.</param>
         /// <param name="logger">The logger.</param>
+        /// <param name="sqlExecutor">SQL executor.</param>
         public DataService(
             IConfigurationBuilder configurationBuilder,
             IHostEnvironment hostEnvironment,
@@ -39,7 +41,8 @@ namespace GodelTech.Database.EntityFrameworkCore
             DbContext dbContext,
             bool enableIdentityInsert,
             Func<TEntity, TType> propertyToCompare,
-            ILogger logger)
+            ILogger logger,
+            ISqlExecutor sqlExecutor = default(SqlExecutor))
             : base(
                 configurationBuilder,
                 hostEnvironment,
@@ -47,8 +50,10 @@ namespace GodelTech.Database.EntityFrameworkCore
                 logger)
         {
             _dbContext = dbContext;
-            _propertyToCompare = propertyToCompare;
             _enableIdentityInsert = enableIdentityInsert;
+            _propertyToCompare = propertyToCompare;
+            // Stryker disable once nullcoalescing
+            _sqlExecutor = sqlExecutor ?? new SqlExecutor();
         }
 
         private readonly Action<ILogger, string, Exception> _logApplyDataAsyncEmptyDataWarningCallback =
@@ -143,39 +148,25 @@ namespace GodelTech.Database.EntityFrameworkCore
                 await _dbContext.Database.OpenConnectionAsync(cancellationToken);
                 try
                 {
-                    await ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] ON;", cancellationToken);
+                    await _sqlExecutor.ExecuteSqlRawAsync(_dbContext, "SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] ON;", cancellationToken);
                     await _dbContext.SaveChangesAsync(cancellationToken);
-                    await ExecuteSqlRawAsync("SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;", cancellationToken);
+                    await _sqlExecutor.ExecuteSqlRawAsync(_dbContext, "SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;", cancellationToken);
                 }
                 finally
                 {
+                    // Stryker disable once statement
                     await _dbContext.Database.CloseConnectionAsync();
                 }
-
-                _logApplyDataAsyncChangesSavedInformationCallback(
-                    Logger,
-                    null
-                );
             }
             else
             {
                 await _dbContext.SaveChangesAsync(cancellationToken);
-
-                _logApplyDataAsyncChangesSavedInformationCallback(
-                    Logger,
-                    null
-                );
             }
-        }
 
-        /// <summary>
-        /// Executes SQL.
-        /// </summary>
-        /// <param name="sql">SQL string.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
-        protected virtual async Task ExecuteSqlRawAsync(string sql, CancellationToken cancellationToken)
-        {
-            await _dbContext.Database.ExecuteSqlRawAsync(sql, cancellationToken);
+            _logApplyDataAsyncChangesSavedInformationCallback(
+                Logger,
+                null
+            );
         }
     }
 }

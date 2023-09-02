@@ -21,7 +21,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
 
             modelBuilder
                 .Entity<FakeEntity>()
-                .ToTable("FakeEntity");
+                .ToTable("FakeEntity", "FakeSchema");
         }
     }
 }

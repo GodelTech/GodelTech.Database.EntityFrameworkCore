@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -57,153 +56,25 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             _testLoggerProvider.Dispose();
         }
 
-        public static IEnumerable<object[]> ApplyDataMemberData =>
-            new Collection<object[]>
-            {
-                new object[]
-                {
-                    true,
-                    new Collection<FakeEntity>(),
-                    null,
-                    new Collection<FakeEntity>()
-                },
-                new object[]
-                {
-                    true,
-                    new Collection<FakeEntity>(),
-                    new Collection<FakeEntity>(),
-                    new Collection<FakeEntity>()
-                },
-                new object[]
-                {
-                    true,
-                    new Collection<FakeEntity>(),
-                    new Collection<FakeEntity>
-                    {
-                        new FakeEntity
-                        {
-                            Id = 1,
-                            Name = "Test Name First"
-                        }
-                    },
-                    new Collection<FakeEntity>
-                    {
-                        new FakeEntity
-                        {
-                            Id = 1,
-                            Name = "Test Name First"
-                        }
-                    }
-                },
-                new object[]
-                {
-                    true,
-                    new Collection<FakeEntity>
-                    {
-                        new FakeEntity
-                        {
-                            Id = 1,
-                            Name = "Test Name First Old"
-                        }
-                    },
-                    new Collection<FakeEntity>
-                    {
-                        new FakeEntity
-                        {
-                            Id = 1,
-                            Name = "Test Name First New"
-                        },
-                        new FakeEntity
-                        {
-                            Id = 2,
-                            Name = "Test Name Second"
-                        }
-                    },
-                    new Collection<FakeEntity>
-                    {
-                        new FakeEntity
-                        {
-                            Id = 1,
-                            Name = "Test Name First New"
-                        },
-                        new FakeEntity
-                        {
-                            Id = 2,
-                            Name = "Test Name Second"
-                        }
-                    }
-                },
-                new object[]
-                {
-                    false,
-                    new Collection<FakeEntity>(),
-                    new Collection<FakeEntity>
-                    {
-                        new FakeEntity
-                        {
-                            Id = 1,
-                            Name = "Test Name First"
-                        }
-                    },
-                    new Collection<FakeEntity>
-                    {
-                        new FakeEntity
-                        {
-                            Id = 1,
-                            Name = "Test Name First"
-                        }
-                    }
-                },
-                new object[]
-                {
-                    false,
-                    new Collection<FakeEntity>
-                    {
-                        new FakeEntity
-                        {
-                            Id = 1,
-                            Name = "Test Name First Old"
-                        }
-                    },
-                    new Collection<FakeEntity>
-                    {
-                        new FakeEntity
-                        {
-                            Id = 1,
-                            Name = "Test Name First New"
-                        },
-                        new FakeEntity
-                        {
-                            Id = 2,
-                            Name = "Test Name Second"
-                        }
-                    },
-                    new Collection<FakeEntity>
-                    {
-                        new FakeEntity
-                        {
-                            Id = 1,
-                            Name = "Test Name First New"
-                        },
-                        new FakeEntity
-                        {
-                            Id = 2,
-                            Name = "Test Name Second"
-                        }
-                    }
-                }
-            };
-
-        [Theory]
-        [MemberData(nameof(ApplyDataMemberData))]
-        public async Task ApplyDataAsync_Success(
-            bool enableIdentityInsert,
-            Collection<FakeEntity> existingEntities,
-            Collection<FakeEntity> entities,
-            Collection<FakeEntity> expectedEntities)
+        [Fact]
+        public async Task ApplyDataAsync_Update_Success()
         {
             // Arrange
             var cancellationToken = new CancellationToken();
+
+            var existingEntities = new Collection<FakeEntity>
+            {
+                new FakeEntity
+                {
+                    Id = 1,
+                    Name = "Test Name First"
+                },
+                new FakeEntity
+                {
+                    Id = 2,
+                    Name = "Test Name Second"
+                }
+            };
 
             _dbContext
                 .FakeEntities
@@ -213,48 +84,204 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
 
             _dbContext.ChangeTracker.Clear();
 
+            var entities = new Collection<FakeEntity>
+            {
+                new FakeEntity
+                {
+                    Id = 1,
+                    Name = "Test Name First New"
+                }
+            };
+
             var service = new FakeDataService(
                 _configurationBuilder,
                 _hostingEnvironment,
                 "Test FolderPath",
                 _dbContext,
-                enableIdentityInsert,
+                false,
                 x => x.Id,
                 _logger
             );
 
             service.SetData(entities);
 
+            var expectedEntities = new Collection<FakeEntity>
+            {
+                new FakeEntity
+                {
+                    Id = 1,
+                    Name = "Test Name First New"
+                },
+                new FakeEntity
+                {
+                    Id = 2,
+                    Name = "Test Name Second"
+                }
+            };
+
             // Act
             await service.ApplyDataAsync(cancellationToken);
 
             // Assert
             _dbContext.FakeEntities.ToList().Should().BeEquivalentTo(expectedEntities);
+
+            var logMessages = _testLoggerContextAccessor.TestLoggerContext.Entries
+                .Select(x => x.Message)
+                .ToList();
+
+            Assert.Equal($"Update entity: {entities[0].Id}", logMessages[0]);
+            Assert.Equal("Saving changes...", logMessages[1]);
+            Assert.Equal("Changes saved successfully", logMessages[2]);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public async Task ExecuteSqlRawAsync_Success(bool enableIdentityInsert)
+        [Fact]
+        public async Task ApplyDataAsync_Add_Success()
         {
             // Arrange
             var cancellationToken = new CancellationToken();
+
+            var entities = new Collection<FakeEntity>
+            {
+                new FakeEntity
+                {
+                    Id = 1,
+                    Name = "Test Name First"
+                },
+                new FakeEntity
+                {
+                    Id = 2,
+                    Name = "Test Name Second"
+                }
+            };
 
             var service = new FakeDataService(
                 _configurationBuilder,
                 _hostingEnvironment,
                 "Test FolderPath",
                 _dbContext,
-                enableIdentityInsert,
+                false,
                 x => x.Id,
                 _logger
             );
 
+            service.SetData(entities);
+
+            var expectedEntities = new Collection<FakeEntity>
+            {
+                new FakeEntity
+                {
+                    Id = 1,
+                    Name = "Test Name First"
+                },
+                new FakeEntity
+                {
+                    Id = 2,
+                    Name = "Test Name Second"
+                }
+            };
+
             // Act
-            await service.ExposedExecuteSqlRawAsync("SELECT * FROM FakeEntity", cancellationToken);
+            await service.ApplyDataAsync(cancellationToken);
 
             // Assert
-            Assert.NotNull(service);
+            _dbContext.FakeEntities.ToList().Should().BeEquivalentTo(expectedEntities);
+
+            var logMessages = _testLoggerContextAccessor.TestLoggerContext.Entries
+                .Select(x => x.Message)
+                .ToList();
+
+            Assert.Equal($"Add entity: {entities[0].Id}", logMessages[0]);
+            Assert.Equal($"Add entity: {entities[1].Id}", logMessages[1]);
+            Assert.Equal("Saving changes...", logMessages[2]);
+            Assert.Equal("Changes saved successfully", logMessages[3]);
+        }
+
+        [Fact]
+        public async Task ApplyDataAsync_WithIdentity_Success()
+        {
+            // Arrange
+            var cancellationToken = new CancellationToken();
+
+            var existingEntities = new Collection<FakeEntity>
+            {
+                new FakeEntity
+                {
+                    Id = 1,
+                    Name = "Test Name First"
+                }
+            };
+
+            _dbContext
+                .FakeEntities
+                .AddRange(existingEntities);
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            _dbContext.ChangeTracker.Clear();
+
+            var entities = new Collection<FakeEntity>
+            {
+                new FakeEntity
+                {
+                    Id = 1,
+                    Name = "Test Name First New"
+                },
+                new FakeEntity
+                {
+                    Id = 2,
+                    Name = "Test Name Second"
+                }
+            };
+
+            var sqlExecutor = new FakeSqlExecutor();
+
+            var service = new FakeDataService(
+                _configurationBuilder,
+                _hostingEnvironment,
+                "Test FolderPath",
+                _dbContext,
+                true,
+                x => x.Id,
+                _logger,
+                sqlExecutor
+            );
+
+            service.SetData(entities);
+
+            var expectedEntities = new Collection<FakeEntity>
+            {
+                new FakeEntity
+                {
+                    Id = 1,
+                    Name = "Test Name First New"
+                },
+                new FakeEntity
+                {
+                    Id = 2,
+                    Name = "Test Name Second"
+                }
+            };
+
+            // Act
+            await service.ApplyDataAsync(cancellationToken);
+
+            // Assert
+            _dbContext.FakeEntities.ToList().Should().BeEquivalentTo(expectedEntities);
+
+            var logMessages = _testLoggerContextAccessor.TestLoggerContext.Entries
+                .Select(x => x.Message)
+                .ToList();
+
+            Assert.Equal($"Update entity: {entities[0].Id}", logMessages[0]);
+            Assert.Equal($"Add entity: {entities[1].Id}", logMessages[1]);
+            Assert.Equal("Saving changes...", logMessages[2]);
+            Assert.Equal("Changes saved successfully", logMessages[3]);
+
+            var schema = "FakeSchema";
+            var tableName = "FakeEntity";
+
+            Assert.Equal($"SET IDENTITY_INSERT [{schema}].[{tableName}] ON;", sqlExecutor.SqlStrings[0]);
+            Assert.Equal($"SET IDENTITY_INSERT [{schema}].[{tableName}] OFF;", sqlExecutor.SqlStrings[1]);
         }
     }
 }

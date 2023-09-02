@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 [assembly: CLSCompliant(false)]
+[assembly: InternalsVisibleTo("GodelTech.Database.EntityFrameworkCore.IntegrationTests")]
 namespace GodelTech.Database.EntityFrameworkCore
 {
     /// <summary>
