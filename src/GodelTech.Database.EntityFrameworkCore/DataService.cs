@@ -144,7 +144,7 @@ namespace GodelTech.Database.EntityFrameworkCore
                 var schema = entityType.GetSchema();
                 var tableName = entityType.GetTableName();
 
-                await _dbContext.Database.OpenConnectionAsync(cancellationToken);
+                await _databaseUtility.OpenConnectionAsync(_dbContext, cancellationToken);
                 try
                 {
                     await _databaseUtility.ExecuteSqlRawAsync(_dbContext, "SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] ON;", cancellationToken);
@@ -153,7 +153,7 @@ namespace GodelTech.Database.EntityFrameworkCore
                 }
                 finally
                 {
-                    await _dbContext.Database.CloseConnectionAsync();
+                    await _databaseUtility.CloseConnectionAsync(_dbContext);
                 }
             }
             else

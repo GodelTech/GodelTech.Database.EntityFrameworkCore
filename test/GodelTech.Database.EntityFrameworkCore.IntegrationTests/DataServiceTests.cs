@@ -279,11 +279,15 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             Assert.Equal("Saving changes...", logMessages[2]);
             Assert.Equal("Changes saved successfully", logMessages[3]);
 
+            Assert.True(databaseUtility.WasOpened);
+
             var schema = "FakeSchema";
             var tableName = "FakeEntity";
 
             Assert.Equal($"SET IDENTITY_INSERT [{schema}].[{tableName}] ON;", databaseUtility.SqlStrings[0]);
             Assert.Equal($"SET IDENTITY_INSERT [{schema}].[{tableName}] OFF;", databaseUtility.SqlStrings[1]);
+
+            Assert.True(databaseUtility.WasClosed);
         }
     }
 }
