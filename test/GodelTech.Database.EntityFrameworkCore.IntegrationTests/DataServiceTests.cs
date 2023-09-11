@@ -50,6 +50,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
 
         public void Dispose()
         {
+            _dbContext.Database.EnsureDeleted();
             _dbContext.Database.CloseConnection();
             _dbContext.Dispose();
 
