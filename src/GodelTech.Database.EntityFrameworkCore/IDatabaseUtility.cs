@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 namespace GodelTech.Database.EntityFrameworkCore
 {
     /// <summary>
-    /// Interface of SQL executor.
+    /// Interface of Database utility.
     /// </summary>
-    public interface ISqlExecutor
+    public interface IDatabaseUtility
     {
         /// <summary>
         /// Executes the given SQL against the database and returns the number of rows affected.

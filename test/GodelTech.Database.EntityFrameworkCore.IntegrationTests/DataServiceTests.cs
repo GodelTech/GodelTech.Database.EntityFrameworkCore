@@ -100,7 +100,8 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
                 _dbContext,
                 false,
                 x => x.Id,
-                _logger
+                _logger,
+                new DatabaseUtility()
             );
 
             service.SetData(entities);
@@ -161,7 +162,8 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
                 _dbContext,
                 false,
                 x => x.Id,
-                _logger
+                _logger,
+                new DatabaseUtility()
             );
 
             service.SetData(entities);
@@ -233,7 +235,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
                 }
             };
 
-            var sqlExecutor = new FakeSqlExecutor();
+            var databaseUtility = new FakeDatabaseUtility();
 
             var service = new FakeDataService(
                 _configurationBuilder,
@@ -243,7 +245,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
                 true,
                 x => x.Id,
                 _logger,
-                sqlExecutor
+                databaseUtility
             );
 
             service.SetData(entities);
@@ -280,8 +282,8 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             var schema = "FakeSchema";
             var tableName = "FakeEntity";
 
-            Assert.Equal($"SET IDENTITY_INSERT [{schema}].[{tableName}] ON;", sqlExecutor.SqlStrings[0]);
-            Assert.Equal($"SET IDENTITY_INSERT [{schema}].[{tableName}] OFF;", sqlExecutor.SqlStrings[1]);
+            Assert.Equal($"SET IDENTITY_INSERT [{schema}].[{tableName}] ON;", databaseUtility.SqlStrings[0]);
+            Assert.Equal($"SET IDENTITY_INSERT [{schema}].[{tableName}] OFF;", databaseUtility.SqlStrings[1]);
         }
     }
 }

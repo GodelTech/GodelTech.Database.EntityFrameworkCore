@@ -19,7 +19,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
             bool enableIdentityInsert,
             Func<FakeEntity, int> propertyToCompare,
             ILogger logger,
-            ISqlExecutor sqlExecutor = default(SqlExecutor))
+            IDatabaseUtility databaseUtility)
             : base(
                 configurationBuilder,
                 hostEnvironment,
@@ -28,7 +28,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
                 enableIdentityInsert,
                 propertyToCompare,
                 logger,
-                sqlExecutor)
+                databaseUtility)
         {
 
         }

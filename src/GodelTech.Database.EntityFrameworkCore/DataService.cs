@@ -21,7 +21,7 @@ namespace GodelTech.Database.EntityFrameworkCore
         private readonly DbContext _dbContext;
         private readonly bool _enableIdentityInsert;
         private readonly Func<TEntity, TType> _propertyToCompare;
-        private readonly ISqlExecutor _sqlExecutor;
+        private readonly IDatabaseUtility _databaseUtility;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataService{TEntity, TType}"/> class.
@@ -33,7 +33,7 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <param name="enableIdentityInsert">Enable IDENTITY_INSERT to insert an explicit value to id property.</param>
         /// <param name="propertyToCompare">The property selector to compare by.</param>
         /// <param name="logger">The logger.</param>
-        /// <param name="sqlExecutor">SQL executor.</param>
+        /// <param name="databaseUtility">Database utility.</param>
         public DataService(
             IConfigurationBuilder configurationBuilder,
             IHostEnvironment hostEnvironment,
@@ -42,7 +42,7 @@ namespace GodelTech.Database.EntityFrameworkCore
             bool enableIdentityInsert,
             Func<TEntity, TType> propertyToCompare,
             ILogger logger,
-            ISqlExecutor sqlExecutor = default(SqlExecutor))
+            IDatabaseUtility databaseUtility = default(DatabaseUtility))
             : base(
                 configurationBuilder,
                 hostEnvironment,
@@ -52,8 +52,7 @@ namespace GodelTech.Database.EntityFrameworkCore
             _dbContext = dbContext;
             _enableIdentityInsert = enableIdentityInsert;
             _propertyToCompare = propertyToCompare;
-            // Stryker disable once nullcoalescing
-            _sqlExecutor = sqlExecutor ?? new SqlExecutor();
+            _databaseUtility = databaseUtility ?? new DatabaseUtility();
         }
 
         private readonly Action<ILogger, string, Exception> _logApplyDataAsyncEmptyDataWarningCallback =
@@ -148,13 +147,12 @@ namespace GodelTech.Database.EntityFrameworkCore
                 await _dbContext.Database.OpenConnectionAsync(cancellationToken);
                 try
                 {
-                    await _sqlExecutor.ExecuteSqlRawAsync(_dbContext, "SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] ON;", cancellationToken);
+                    await _databaseUtility.ExecuteSqlRawAsync(_dbContext, "SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] ON;", cancellationToken);
                     await _dbContext.SaveChangesAsync(cancellationToken);
-                    await _sqlExecutor.ExecuteSqlRawAsync(_dbContext, "SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;", cancellationToken);
+                    await _databaseUtility.ExecuteSqlRawAsync(_dbContext, "SET IDENTITY_INSERT [" + schema + "].[" + tableName + "] OFF;", cancellationToken);
                 }
                 finally
                 {
-                    // Stryker disable once statement
                     await _dbContext.Database.CloseConnectionAsync();
                 }
             }

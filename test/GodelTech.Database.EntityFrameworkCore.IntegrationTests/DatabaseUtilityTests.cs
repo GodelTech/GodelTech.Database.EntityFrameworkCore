@@ -7,13 +7,13 @@ using Xunit;
 
 namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
 {
-    public sealed class SqlExecutorTests : IDisposable
+    public sealed class DatabaseUtilityTests : IDisposable
     {
         private readonly FakeDbContext _dbContext;
 
-        private readonly SqlExecutor _executor = new SqlExecutor();
+        private readonly DatabaseUtility _databaseUtility = new DatabaseUtility();
 
-        public SqlExecutorTests()
+        public DatabaseUtilityTests()
         {
             var dbContextOptions = new DbContextOptionsBuilder<FakeDbContext>()
                 .UseSqlite("DataSource=:memory:")
@@ -37,7 +37,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             var cancellationToken = new CancellationToken();
 
             // Act
-            var result = await _executor.ExecuteSqlRawAsync(_dbContext, "SELECT * FROM FakeEntity", cancellationToken);
+            var result = await _databaseUtility.ExecuteSqlRawAsync(_dbContext, "SELECT * FROM FakeEntity", cancellationToken);
 
             // Assert
             Assert.Equal(-1, result);

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
 {
-    public class FakeSqlExecutor : ISqlExecutor
+    public class FakeDatabaseUtility : IDatabaseUtility
     {
         public IList<string> SqlStrings { get; } = new List<string>();
 

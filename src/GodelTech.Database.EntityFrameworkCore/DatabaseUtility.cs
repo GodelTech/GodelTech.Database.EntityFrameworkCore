@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GodelTech.Database.EntityFrameworkCore
 {
-    internal class SqlExecutor : ISqlExecutor
+    internal class DatabaseUtility : IDatabaseUtility
     {
         public async Task<int> ExecuteSqlRawAsync(DbContext dbContext, string sql, CancellationToken cancellationToken = default)
         {
