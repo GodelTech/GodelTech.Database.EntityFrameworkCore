@@ -78,6 +78,9 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             // Arrange
             var cancellationToken = new CancellationToken();
 
+            await _fakeBaseDbContext.Database.MigrateAsync(cancellationToken);
+            await _fakeDbContext.Database.MigrateAsync(cancellationToken);
+
             // Act
             await _service.DeleteMigrationsAsync(cancellationToken);
 
