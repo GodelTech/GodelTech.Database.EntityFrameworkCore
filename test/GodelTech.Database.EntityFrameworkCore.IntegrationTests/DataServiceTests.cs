@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes;
 using GodelTech.XUnit.Logging;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting.Internal;
@@ -297,6 +298,67 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             Assert.Equal($"SET IDENTITY_INSERT [{schema}].[{tableName}] OFF;", sqlStrings[1]);
 
             Assert.True(wasClosed);
+        }
+
+        [Fact]
+        public async Task ApplyDataAsync_WhenDatabaseUtilityIsNull()
+        {
+            // Arrange
+            var cancellationToken = new CancellationToken();
+
+            var existingEntities = new Collection<FakeEntity>
+            {
+                new FakeEntity
+                {
+                    Id = 1,
+                    Name = "Test Name First"
+                }
+            };
+
+            _dbContext
+                .FakeEntities
+                .AddRange(existingEntities);
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            _dbContext.ChangeTracker.Clear();
+
+            var entities = new Collection<FakeEntity>
+            {
+                new FakeEntity
+                {
+                    Id = 1,
+                    Name = "Test Name First New"
+                },
+                new FakeEntity
+                {
+                    Id = 2,
+                    Name = "Test Name Second"
+                }
+            };
+
+            var service = new FakeDataService(
+                _configurationBuilder,
+                _hostingEnvironment,
+                "Test FolderPath",
+                _dbContext,
+                true,
+                x => x.Id,
+                _logger,
+                null
+            );
+
+            service.SetData(entities);
+
+            // Act & Assert
+            // because Sqlite doesn't support SET IDENTITY_INSERT
+            var exception = await Assert.ThrowsAsync<SqliteException>(
+                () => service.ApplyDataAsync(cancellationToken)
+            );
+            Assert.Equal(
+                "SQLite Error 1: 'near \"SET\": syntax error'.",
+                exception.Message
+            );
         }
     }
 }

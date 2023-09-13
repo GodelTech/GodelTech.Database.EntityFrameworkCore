@@ -52,7 +52,6 @@ namespace GodelTech.Database.EntityFrameworkCore
             _dbContext = dbContext;
             _enableIdentityInsert = enableIdentityInsert;
             _propertyToCompare = propertyToCompare;
-            // Stryker disable once nullcoalescing
             _databaseUtility = databaseUtility ?? new DatabaseUtility();
         }
 
