@@ -243,7 +243,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             var wasClosed = false;
             var databaseUtility = new FakeDatabaseUtility(
                 () => wasOpened = true,
-                val => sqlStrings.Add(val),
+                sqlStrings.Add,
                 () => wasClosed = true
             );
 
