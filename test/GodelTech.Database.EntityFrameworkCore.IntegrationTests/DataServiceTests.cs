@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -236,7 +237,14 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
                 }
             };
 
-            var databaseUtility = new FakeDatabaseUtility();
+            var wasOpened = false;
+            var sqlStrings = new List<string>();
+            var wasClosed = false;
+            var databaseUtility = new FakeDatabaseUtility(
+                () => wasOpened = true,
+                val => sqlStrings.Add(val),
+                () => wasClosed = true
+            );
 
             var service = new FakeDataService(
                 _configurationBuilder,
@@ -280,15 +288,15 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests
             Assert.Equal("Saving changes...", logMessages[2]);
             Assert.Equal("Changes saved successfully", logMessages[3]);
 
-            Assert.True(databaseUtility.WasOpened);
+            Assert.True(wasOpened);
 
             var schema = "FakeSchema";
             var tableName = "FakeEntity";
 
-            Assert.Equal($"SET IDENTITY_INSERT [{schema}].[{tableName}] ON;", databaseUtility.SqlStrings[0]);
-            Assert.Equal($"SET IDENTITY_INSERT [{schema}].[{tableName}] OFF;", databaseUtility.SqlStrings[1]);
+            Assert.Equal($"SET IDENTITY_INSERT [{schema}].[{tableName}] ON;", sqlStrings[0]);
+            Assert.Equal($"SET IDENTITY_INSERT [{schema}].[{tableName}] OFF;", sqlStrings[1]);
 
-            Assert.True(databaseUtility.WasClosed);
+            Assert.True(wasClosed);
         }
     }
 }

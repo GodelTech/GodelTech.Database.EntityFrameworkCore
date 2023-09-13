@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,20 +8,30 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
 {
     public class FakeDatabaseUtility : IDatabaseUtility
     {
-        public bool WasOpened { get; private set; }
-        public IList<string> SqlStrings { get; } = new List<string>();
-        public bool WasClosed { get; private set; }
+        private readonly Action _onOpenConnection;
+        private readonly Action<string> _onExecuteSql;
+        private readonly Action _onCloseConnection;
+
+        public FakeDatabaseUtility(
+            Action onOpenConnection = null,
+            Action<string> onExecuteSql = null,
+            Action onCloseConnection = null)
+        {
+            _onOpenConnection = onOpenConnection;
+            _onExecuteSql = onExecuteSql;
+            _onCloseConnection = onCloseConnection;
+        }
 
         public async Task OpenConnectionAsync([NotNull] DbContext dbContext, CancellationToken cancellationToken = default)
         {
             await dbContext.Database.OpenConnectionAsync(cancellationToken);
 
-            WasOpened = true;
+            _onOpenConnection?.Invoke();
         }
 
         public Task<int> ExecuteSqlRawAsync(DbContext dbContext, string sql, CancellationToken cancellationToken = default)
         {
-            SqlStrings.Add(sql);
+            _onExecuteSql?.Invoke(sql);
 
             return Task.FromResult(0);
         }
@@ -30,7 +40,7 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
         {
             await dbContext.Database.CloseConnectionAsync();
 
-            WasClosed = true;
+            _onCloseConnection?.Invoke();
         }
     }
 }
