@@ -14,3 +14,8 @@ dotnet_diagnostic.IDE0041.severity = none
 
 # IDE0160: Convert to block-scoped namespace
 csharp_style_namespace_declarations = block_scoped
+
+[Migrations/**.{cs,vb}]
+
+# CA1062: Validate arguments of public methods
+dotnet_code_quality.CA1062.excluded_type_names_with_derived_types = Microsoft.EntityFrameworkCore.Migrations.Migration

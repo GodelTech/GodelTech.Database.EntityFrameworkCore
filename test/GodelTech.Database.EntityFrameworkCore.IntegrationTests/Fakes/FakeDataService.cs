@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -20,7 +18,8 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
             DbContext dbContext,
             bool enableIdentityInsert,
             Func<FakeEntity, int> propertyToCompare,
-            ILogger logger)
+            ILogger logger,
+            IDatabaseUtility databaseUtility)
             : base(
                 configurationBuilder,
                 hostEnvironment,
@@ -28,7 +27,8 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
                 dbContext,
                 enableIdentityInsert,
                 propertyToCompare,
-                logger)
+                logger,
+                databaseUtility)
         {
 
         }
@@ -38,19 +38,9 @@ namespace GodelTech.Database.EntityFrameworkCore.IntegrationTests.Fakes
             _entities = entities;
         }
 
-        public async Task ExposedExecuteSqlRawAsync(string sql, CancellationToken cancellationToken)
-        {
-            await base.ExecuteSqlRawAsync(sql, cancellationToken);
-        }
-
         protected override IList<FakeEntity> GetData()
         {
             return _entities;
-        }
-
-        protected override Task ExecuteSqlRawAsync(string sql, CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
         }
     }
 }

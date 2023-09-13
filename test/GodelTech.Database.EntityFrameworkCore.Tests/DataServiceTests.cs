@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,20 +30,8 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
             _mockLogger = new Mock<ILogger>(MockBehavior.Strict);
         }
 
-        public static IEnumerable<object[]> EntitiesIsNullOrEmptyMemberData =>
-            new Collection<object[]>
-            {
-                new object[] { true, null },
-                new object[] { false, null },
-                new object[] { true, new List<FakeEntity>() },
-                new object[] { false, new List<FakeEntity>() }
-            };
-
-        [Theory]
-        [MemberData(nameof(EntitiesIsNullOrEmptyMemberData))]
-        public async Task ApplyDataAsync_WhenEntitiesIsNullOrEmpty(
-            bool enableIdentityInsert,
-            IList<FakeEntity> entities)
+        [Fact]
+        public async Task ApplyDataAsync_WhenEntitiesIsNull()
         {
             // Arrange
             var cancellationToken = new CancellationToken();
@@ -54,12 +41,53 @@ namespace GodelTech.Database.EntityFrameworkCore.Tests
                 _mockHostEnvironment.Object,
                 FolderPath,
                 _mockDbContext.Object,
-                enableIdentityInsert,
+                false,
                 x => x.Id,
                 _mockLogger.Object
             );
 
-            service.SetData(entities);
+            service.SetData(null);
+
+            _mockLogger
+                .Setup(x => x.IsEnabled(LogLevel.Warning))
+                .Returns(true);
+
+            Expression<Action<ILogger>> loggerExpression = x => x.Log(
+                LogLevel.Warning,
+                0,
+                It.Is<It.IsAnyType>((v, t) =>
+                    v.ToString() ==
+                    $"Empty data: {nameof(FakeEntity)}"
+                ),
+                null,
+                It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)
+            );
+            _mockLogger.Setup(loggerExpression);
+
+            // Act
+            await service.ApplyDataAsync(cancellationToken);
+
+            // Assert
+            _mockLogger.Verify(loggerExpression, Times.Once);
+        }
+
+        [Fact]
+        public async Task ApplyDataAsync_WhenEntitiesIsEmpty()
+        {
+            // Arrange
+            var cancellationToken = new CancellationToken();
+
+            var service = new FakeDataService(
+                _mockConfigurationBuilder.Object,
+                _mockHostEnvironment.Object,
+                FolderPath,
+                _mockDbContext.Object,
+                false,
+                x => x.Id,
+                _mockLogger.Object
+            );
+
+            service.SetData(new List<FakeEntity>());
 
             _mockLogger
                 .Setup(x => x.IsEnabled(LogLevel.Warning))

@@ -1,0 +1,4 @@
+[*.{cs,vb}]
+
+# IDE0240: Nullable directive is redundant
+dotnet_diagnostic.IDE0240.severity = none
