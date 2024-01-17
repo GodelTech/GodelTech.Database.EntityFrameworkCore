@@ -1,16 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <PackageId>GodelTech.Database.EntityFrameworkCore</PackageId>
     <VersionPrefix>1.1.1</VersionPrefix>
-    <Authors>v.rodchenko</Authors>
+    <Authors>Vladimir Rodchenko</Authors>
     <Company>Godel Technologies</Company>
     <Description>Library to work with database, apply migrations and data using Entity Framework Core</Description>
     <Copyright>Godel Technologies 2020</Copyright>
-    <PackageLicenseUrl>https://github.com/GodelTech/GodelTech.Database.EntityFrameworkCore/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/GodelTech/GodelTech.Database.EntityFrameworkCore/wiki</PackageProjectUrl>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl>https://www.gravatar.com/avatar/839234621070de51e7b9cabd5ceee8fe?s=64</PackageIconUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/GodelTech/GodelTech.Database.EntityFrameworkCore</RepositoryUrl>
     <PackageTags>Database Entity Framework Core</PackageTags>
 
@@ -29,19 +31,34 @@
     <ProjectGuid>{00000000-0000-0000-0000-000000000010}</ProjectGuid>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="..\..\icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.22" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.26" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.15" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 
     <!-- Source Link needs this -->
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

@@ -114,7 +114,7 @@ namespace GodelTech.Database.EntityFrameworkCore
         /// <param name="dataService">The data service.</param>
         protected void RegisterDataService(IDataService dataService)
         {
-            if (dataService == null) throw new ArgumentNullException(nameof(dataService));
+            ArgumentNullException.ThrowIfNull(dataService);
 
             _dataServices[dataService.GetType()] = dataService;
         }
