@@ -21,7 +21,6 @@ extends:
   template: '.azuredevops/.NET/NuGet.yml@GodelTech'
   parameters:
     dotNetSDKVersions: [ '6.0.x', '7.0.x', '8.0.x' ]
-    enableNuGetValidationOutdatedPackages: false
     mutationTestingProjects:
     - displayName: 'GodelTech.Database.EntityFrameworkCore'
       folderPath: '/src/GodelTech.Database.EntityFrameworkCore'
