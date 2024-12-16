@@ -1,6 +1,7 @@
 # GodelTech.Database.EntityFrameworkCore
 
-Library to work with database, apply migrations and data using Entity Framework Core
+# Description
+GodelTech.Database.EntityFrameworkCore is a .NET library designed to work with databases, apply migrations, and manage data using Entity Framework Core. It simplifies the process of creating console applications with database migrations and data operations.
 
 ## Overview
 
@@ -72,3 +73,6 @@ public class Worker : BackgroundService
     }
 }
 ```
+
+# License
+This project is licensed under the MIT License. See the LICENSE file for more details.
